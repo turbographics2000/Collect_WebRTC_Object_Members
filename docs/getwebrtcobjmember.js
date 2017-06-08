@@ -32,7 +32,7 @@ getDocs().then(docs=> {
     var data = WebIDLParse(docs);
     objMembers = {};
     Object.keys(data.Dictionary).forEach(className => {
-        objMembers[className] = Object.keys(window[className].prototype).sort();
+        objMembers[className] = window[className] ? Object.keys(window[className].prototype).sort() : null;
     });
     Object.keys(data.Interface).forEach(className => {
         objMembers[className] = Object.keys(window[className].prototype).sort();
