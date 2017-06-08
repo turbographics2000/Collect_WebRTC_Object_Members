@@ -20,7 +20,7 @@ function getDocs() {
             .then(txt => {
                 var doc = parser.parseFromString(txt, 'text/html');
                 var legacySection = doc.getElementById(page.legacyElementId);
-                if(legacySection) legacySection.parentElement.removeChild(legacySection);
+                if (legacySection) legacySection.parentElement.removeChild(legacySection);
                 docs.push(doc);
                 return docs;
             });
@@ -28,11 +28,14 @@ function getDocs() {
     return promise;
 }
 
-getDocs().then(docs=> {
+getDocs().then(docs => {
     var data = WebIDLParse(docs);
     objMembers = {};
     Object.keys(data.Dictionary).concat(Object.keys(data.Interface)).sort().forEach(className => {
-        objMembers[className] = window[className] ? Object.keys(window[className].prototype).sort() : null;
+        //objMembers[className] = window[className] ? Object.keys(window[className].prototype).sort() : null;
+        if (window[className]) {
+            objMembers[className] = Object.keys(window[className].prototype).sort()
+        }
     });
     var json = JSON.stringify(objMembers, null, 2).replace(/"/g, '');
     var blob = new Blob([json], { type: 'text/plain' });
