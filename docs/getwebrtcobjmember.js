@@ -31,7 +31,7 @@ function getDocs() {
 getDocs().then(docs=> {
     var data = WebIDLParse(docs);
     objMembers = {};
-    Object.keys(data.Dictionary).concat(Object.keys(data.Interface)).forEach(className => {
+    Object.keys(data.Dictionary).concat(Object.keys(data.Interface)).sort().forEach(className => {
         objMembers[className] = window[className] ? Object.keys(window[className].prototype).sort() : null;
     });
     var json = JSON.stringify(objMembers, null, 2).replace(/"/g, '');
