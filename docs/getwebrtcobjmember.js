@@ -24,7 +24,7 @@ function getDocs() {
                 docs.push(doc);
                 return docs;
             });
-    });
+    }); 
     return promise;
 }
 
