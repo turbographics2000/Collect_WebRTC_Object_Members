@@ -92,7 +92,7 @@ function buildTable(objMembers) {
     var browserHeaderTD = document.createElement('td');
     browserHeaderTD.className = browserName;
     var browserNameDiv = document.createElement('div');
-    bowserNameDiv.className = 'browser-name';
+    browserNameDiv.className = 'browser-name';
     browserNameDiv.textContent = browserName;
     var browserVersionDiv = document.createElement('div');
     browserVersionDiv.className = 'browser-version';
