@@ -70,8 +70,8 @@ getDocs().then(docs => {
 
 function buildTable(objMembers) {
   var colSpan = 1;
-  Object.keys(data).forEach(browserName => {
-    colSpan += Object.keys(data[browserName]).length;
+  Object.keys(objMembers).forEach(browserName => {
+    colSpan += Object.keys(objMembers[browserName]).length;
   });
 
   var saveData = {};
@@ -83,7 +83,7 @@ function buildTable(objMembers) {
   table.appendChild(headerTR);
 
   var data = JSON.parse(localStorage.getItem('data') || null) || {};
-  data[browser.name][browserMajorVersion] = { [parseInt(browser.version)]: objMembers };
+  data[browser.name][browserMajorVersion] = objMembers;
 
   var rows = {};
   Object.keys(data).sort().forEach(browserName => {
