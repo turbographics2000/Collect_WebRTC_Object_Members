@@ -74,7 +74,8 @@ getDocs().then(docs => {
   var collect = function (type, className) {
     objMembers[className] = {};
     var classPrototype = window[className] ? window[className].prototype : null;
-    if (className === 'NavigatorUserMedia') classPrototype = navigator.mediaDevices;
+    if (className === 'NavigatorUserMedia') classPrototype = navigator;
+    if(className === 'MediaDevices') classPrototype = navigator.mediaDevices;
     if (classPrototype) {
       var flg = false;
       Object.keys(classPrototype).forEach(memberName => {
@@ -94,7 +95,7 @@ getDocs().then(docs => {
     Object.keys(parseData[type][className]).forEach(memberType => {
       if (typeof parseData[type][className][memberType] !== 'object') return;
       Object.keys(parseData[type][className][memberType]).forEach(memberName => {
-        if (classPrototype && memberName in classPrototype) {
+        if (classPrototype && (memberName in classPrototype || classPrototype[memberName])) {
           specCnt++;
           objMembers[className][memberName] = TYPE_SPEC;
         } else {
