@@ -60,6 +60,7 @@ getDocs().then(docs => {
       Object.keys(window[className].prototype).forEach(memberName => {
         Object.keys(parseData[type][className]).forEach(memberType => {
           if (typeof parseData[type][className][memberType] !== 'object') return;
+          if (Object.keys(parseData[type][className][memberType]).length === 0) return;
           if (Object.keys(parseData[type][className][memberType]).includes(memberName)) {
             flg = true;
           }
@@ -71,6 +72,7 @@ getDocs().then(docs => {
       });
       Object.keys(parseData[type][className]).forEach(memberType => {
         if (typeof parseData[type][className][memberType] !== 'object') return;
+        if (Object.keys(parseData[type][className][memberType]).length === 0) return;
         Object.keys(parseData[type][className][memberType]).forEach(memberName => {
           if (memberName in window[className].prototype) {
             specCnt++;
@@ -86,7 +88,10 @@ getDocs().then(docs => {
     }
   }
 
-  Object.keys(parseData.Dictionary).forEach(className => collect('Dictionary', className));
+  Object.keys(parseData.Dictionary).forEach(className => {
+
+    collect('Dictionary', className);
+  });
   Object.keys(parseData.Interface).forEach(className => collect('Interface', className));
 
   buildTable(objMembers);
@@ -205,7 +210,7 @@ function buildTable(objMembers) {
   Object.keys(saveData).sort().forEach(browserName => {
     Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
       Object.keys(data[browserName][version]).sort().forEach(className => {
-        if(data[browserName][version][className] === null) return;
+        if (data[browserName][version][className] === null) return;
         Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
           var memberTD = document.createElement(browserName + version + className + memberName);
           memberTD.classList.remove('member-null');
