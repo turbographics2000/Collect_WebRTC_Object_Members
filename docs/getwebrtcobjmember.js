@@ -125,6 +125,7 @@ function buildTable(objMembers) {
       arrow.classList.add('arrow');
       arrow.classList.add(className + 'arrow');
       classNameTD.appendChild(arrow);
+      classNameTR.style.cursor = 'pointer';
     }
     var classNameSpacerTD = document.createElement('td');
     classNameSpacerTD.colSpan = colSpan;
