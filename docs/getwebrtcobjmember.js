@@ -116,6 +116,7 @@ function buildTable(objMembers) {
     var classNameTR = document.createElement('tr');
     var classNameTD = document.createElement('td');
     classNameTD.colSpan = colSpan;
+    classNameTD.textContent = className;
     classNameTD.classList.add('class-name');
     classNameTR.appendChild(classNameTD);
     table.appendChild(classNameTR);
