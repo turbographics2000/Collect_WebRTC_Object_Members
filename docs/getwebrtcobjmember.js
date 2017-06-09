@@ -73,7 +73,7 @@ getDocs().then(docs => {
   var notSpecCnt = 0;
   var collect = function (type, className) {
     objMembers[className] = {};
-    if(className === 'NavigatorUserMedia') className = 'getUserMedia';
+    if (className === 'NavigatorUserMedia') className = 'getUserMedia';
     var obj = window[className] || navigator.mediaDevices[className] || null;
     if (obj) {
       var flg = false;
@@ -91,18 +91,18 @@ getDocs().then(docs => {
         }
       });
     }
-      Object.keys(parseData[type][className]).forEach(memberType => {
-        if (typeof parseData[type][className][memberType] !== 'object') return;
-        Object.keys(parseData[type][className][memberType]).forEach(memberName => {
-          if (memberName in obj.prototype) {
-            specCnt++;
-            objMembers[className][memberName] = TYPE_SPEC;
-          } else {
-            notSpecCnt++;
-            objMembers[className][memberName] = TYPE_NOTSPEC;
-          }
-        });
+    Object.keys(parseData[type][className]).forEach(memberType => {
+      if (typeof parseData[type][className][memberType] !== 'object') return;
+      Object.keys(parseData[type][className][memberType]).forEach(memberName => {
+        if (obj && memberName in obj.prototype) {
+          specCnt++;
+          objMembers[className][memberName] = TYPE_SPEC;
+        } else {
+          notSpecCnt++;
+          objMembers[className][memberName] = TYPE_NOTSPEC;
+        }
       });
+    });
     // } else {
     //   objMembers[className] = null;
     // }
