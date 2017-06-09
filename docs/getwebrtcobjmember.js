@@ -53,7 +53,7 @@ function removeParamPattern(obj) {
       key === 'InputDeviceInfo' ||
       key.endsWith('Init') ||
       Object.keys(obj[key]).length === 0 ||
-      (obje[key].Member && Object.keys(obj[key].Member).length === 0) ||
+      (obj[key].Member && Object.keys(obj[key].Member).length === 0) ||
       (obj[key].Member && ((obj[key].Member.min && obj[key].Member.max) || (obj[key].Member.ideal && obj[key].Member.exact)))) {
       delete obj[key];
     } else {
