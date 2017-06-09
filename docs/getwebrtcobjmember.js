@@ -234,7 +234,7 @@ function buildTable(objMembers) {
       Object.keys(data[browserName][version]).sort().forEach(className => {
         if (data[browserName][version][className] === null) return;
         members = Object.keys(data[browserName][version][className]).sort();
-        if(members.length === 0 || window.arrows[className]) {
+        if(members.length === 0 && window.arrows[className]) {
           window.arrows[className].parentElement.removeChild(window.arrows[className]);
         }
         members.forEach(memberName => {
