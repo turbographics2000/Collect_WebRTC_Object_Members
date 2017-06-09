@@ -126,7 +126,7 @@ function buildTable(objMembers) {
       memberTR.classList.add(rows[className][memberName].type);
       memberNameTD.classList.add('member-name');
       memberNameTD.textContent = memberName;
-      memberTR.appendChild(memberTD);
+      memberTR.appendChild(memberNameTD);
       Object.keys(saveData).sort().forEach(browserName => {
         Object.keys(saveData[browserName]).sort().forEach(version => {
           var memberTD = document.createElement('td');
