@@ -193,7 +193,7 @@ function buildTable(objMembers) {
       classNameTR.style.cursor = 'pointer';
       classNameTR.appendChild(classNameTD);
       Object.keys(saveData).sort().forEach(browserName => {
-        window.browserCounters[browserName] = {};
+        window.browserCounters[browserName] = window.browserCounters[browserName] || {};
         Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
           var classImpCntTD = document.createElement('td');
           classImpCntTD.classList.add('imp-cnt');
