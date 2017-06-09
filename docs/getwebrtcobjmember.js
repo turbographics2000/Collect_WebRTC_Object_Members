@@ -75,7 +75,6 @@ getDocs().then(docs => {
       Object.keys(window[className].prototype).forEach(memberName => {
         Object.keys(parseData[type][className]).forEach(memberType => {
           if (typeof parseData[type][className][memberType] !== 'object') return;
-          if (Object.keys(parseData[type][className][memberType]).length === 0) flg = true;
           if (Object.keys(parseData[type][className][memberType]).includes(memberName)) {
             flg = true;
           }
@@ -87,7 +86,6 @@ getDocs().then(docs => {
       });
       Object.keys(parseData[type][className]).forEach(memberType => {
         if (typeof parseData[type][className][memberType] !== 'object') return;
-        if (Object.keys(parseData[type][className][memberType]).length === 0) return;
         Object.keys(parseData[type][className][memberType]).forEach(memberName => {
           if (memberName in window[className].prototype) {
             specCnt++;
