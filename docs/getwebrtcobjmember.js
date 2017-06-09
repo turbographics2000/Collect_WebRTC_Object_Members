@@ -51,6 +51,7 @@ function removeParamPattern(obj) {
       key === 'HTMLIFrameElement' ||
       key === 'Constraints' ||
       key === 'InputDeviceInfo' ||
+      key === 'Superclass' ||
       key.endsWith('Init') ||
       Object.keys(obj[key]).length === 0 ||
       (obj[key].Member && Object.keys(obj[key].Member).length === 0) ||
