@@ -83,6 +83,7 @@ function buildTable(objMembers) {
   table.appendChild(headerTR);
 
   var data = JSON.parse(localStorage.getItem('data') || null) || {};
+  data[browser.name] = data[browser.name] || {};
   data[browser.name][browserMajorVersion] = objMembers;
 
   var rows = {};
