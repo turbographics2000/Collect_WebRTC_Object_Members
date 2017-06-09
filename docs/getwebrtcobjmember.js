@@ -136,7 +136,6 @@ function buildTable(objMembers) {
       });
     });
     classNameTR.appendChild(classNameTD);
-    classNameTR.appendChild(classNameSpacerTD);
     classNameTR.onclick = function() {
       [...document.getElementsByClassName(this.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
       document.getElementsByClassName(this.textContent + 'arrow')[0].classList.toggle('down');
