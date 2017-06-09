@@ -76,7 +76,7 @@ getDocs().then(docs => {
     objMembers[className] = {};
     var classPrototype = window[className] ? window[className].prototype : null;
     if (className === 'NavigatorUserMedia') classPrototype = navigator;
-    if(className === 'MediaDevices') classPrototype = navigator.mediaDevices;
+    if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
     if (classPrototype) {
       var flg = false;
       Object.keys(classPrototype).forEach(memberName => {
@@ -116,6 +116,8 @@ getDocs().then(docs => {
   buildTable(objMembers);
 });
 
+window.browserHeaders = {};
+window.browserCounters = {};
 function buildTable(objMembers) {
   var saveData = {};
 
@@ -151,6 +153,7 @@ function buildTable(objMembers) {
       browserHeaderTD.appendChild(browserNameDiv);
       browserHeaderTD.appendChild(browserVersionDiv);
       headerTR.appendChild(browserHeaderTD);
+      window.browserHeaders[browserName][version] = browserHeaderTD;
 
       saveData[browserName][version] = data[browserName][version];
       Object.keys(data[browserName][version]).sort().forEach(className => {
@@ -188,6 +191,8 @@ function buildTable(objMembers) {
       classNameTD.appendChild(arrow);
       classNameTR.style.cursor = 'pointer';
       classNameTR.appendChild(classNameTD);
+      window.browserCounters[browserName] = {};
+      window.browserCounters[browserName][version] = { specCnt: 0, memberCnt: 0 };
       Object.keys(saveData).sort().forEach(browserName => {
         Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
           var classImpCntTD = document.createElement('td');
@@ -196,6 +201,8 @@ function buildTable(objMembers) {
           if (memberNames.length) {
             classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
             classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
+            window.browserCounters[browserName][version].specCnt += specCnt;
+            window.browserCounters[browserName][version].memberCnt += memberNames.length;
           }
           classNameTR.appendChild(classImpCntTD);
         });
@@ -234,7 +241,7 @@ function buildTable(objMembers) {
       Object.keys(data[browserName][version]).sort().forEach(className => {
         if (data[browserName][version][className] === null) return;
         members = Object.keys(data[browserName][version][className]).sort();
-        if(members.length === 0 && window.arrows[className]) {
+        if (members.length === 0 && window.arrows[className]) {
           window.arrows[className].parentElement.removeChild(window.arrows[className]);
         }
         members.forEach(memberName => {
@@ -243,6 +250,22 @@ function buildTable(objMembers) {
           memberTD.classList.add(data[browserName][version][className][memberName]);
         });
       });
+    });
+  });
+
+  Object.keys(window.browserCounters).forEach(browserName => {
+    Object.keys(window.browserCounters[browserName]).forEach(version => {
+      var specCnt = window.browserCounters[browserName][version].specCnt;
+      var memberCnt = window.browserCounters[browserName][version].memberCnt;
+      var header = window.browserHeaders[browserName][version];
+      var headerBar = document.createElement('div');
+      headerBar.classList.add('header-bar');
+      headerBar.style.height = (specCnt / memberCnt * 100) + '%';
+      header.appendChild(headerBar);
+      var headerCnt = document.createElement('div');
+      headerCnt.classList.add('header-cnt');
+      headerCnt.textContent =  specCnt + ' / ' + memberCnt;;
+      header.appendChild(headerCnt);
     });
   });
   delete window.tds;
