@@ -1,6 +1,18 @@
 var browser = detectBrowser(navigator.userAgent);
 var browserMajorVersion = parseInt(browser.version);
 
+function heatColor(alpha) {
+  var rA = 0x44;
+  var gA = 0xab;
+  var bA = 0x44;
+  var rB = 0xee;
+  var gB = 0x11;
+  var bB = 0x11;
+  var r = rA * alpha + rB * (1 - alpha) | 0;
+  var g = gA * alpha + gB * (1 - alpha) | 0;
+  var b = bA * alpha + bB * (1 - alpha) | 0;
+  return ('rgb(' + r0 + ',' + g + ',' + b + ')');
+}
 var pages = [
   {
     url: 'https://www.w3.org/TR/webrtc/',
@@ -142,10 +154,9 @@ function buildTable(objMembers) {
       Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
         var classImpCntTD = document.createElement('td');
         classImpCntTD.classList.add('imp-cnt');
-        classImpCntTD.textContent = Object.keys(saveData[browserName][version][className]).filter(x => {
-          console.log(saveData[browserName][version][className][x]);
-          return saveData[browserName][version][className][x] === 'spec';
-        }).length + ' / ' + memberNames.length;
+        var specCnt = Object.keys(saveData[browserName][version][className]).filter(x => saveData[browserName][version][className][x] === 'spec').length;
+        classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
+        classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
         classNameTR.appendChild(classImpCntTD);
       });
     });
