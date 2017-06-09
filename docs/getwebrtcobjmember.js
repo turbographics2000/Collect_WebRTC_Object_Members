@@ -45,7 +45,7 @@ getDocs().then(docs => {
     objMembers[className] = {};
     if (window[className]) {
       Object.keys(window[className].prototype).forEach(memberName => {
-        if (!parseData[type][className].includes(memberName)) {
+        if (!Object.keys(parseData[type][className]).includes(memberName)) {
           legacyCnt++;
           objMembers[className][memberName] = TYPE_LEGACY;
         }
