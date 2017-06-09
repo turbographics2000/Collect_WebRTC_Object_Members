@@ -133,8 +133,8 @@ function buildTable(objMembers) {
         var classImpCntTD = document.createElement('td');
         classImpCntTD.classList.add('imp-cnt');
         classImpCntTD.textContent =  Object.keys(saveData[browserName][version][className]).filter(x =>{
-          console.log(x);
-          return x === 'spec';
+          console.log(saveData[browserName][version][className][x]);
+          return saveData[browserName][version][className][x] === 'spec';
         }) + ' / ' + memberNames.length;
         classNameTR.appendChild(classImpCntTD);
       });
