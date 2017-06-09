@@ -69,7 +69,7 @@ getDocs().then(docs => {
 });
 
 function buildTable(objMembers) {
-  var colSpan = 1;
+  var colSpan = 0;
   Object.keys(objMembers).forEach(browserName => {
     colSpan += Object.keys(objMembers[browserName]).length;
   });
@@ -116,10 +116,12 @@ function buildTable(objMembers) {
   Object.keys(rows).sort().forEach(className => {
     var classNameTR = document.createElement('tr');
     var classNameTD = document.createElement('td');
-    classNameTD.colSpan = colSpan;
     classNameTD.textContent = className;
     classNameTD.classList.add('class-name');
+    var classNameSpacerTD = document.createElement('td');
+    classNameSpacerTD.colSpan = colSpan;
     classNameTR.appendChild(classNameTD);
+    classNameTR.appendChild(classNameSpacerTD);
     table.appendChild(classNameTR);
     Object.keys(rows[className]).sort().forEach(memberName => {
       var memberTR = document.createElement('tr');
