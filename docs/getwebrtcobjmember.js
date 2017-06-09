@@ -115,10 +115,14 @@ function buildTable(objMembers) {
   });
 
   Object.keys(rows).sort().forEach(className => {
+    var memberNames = Object.keys(rows[className]).sort();
     var classNameTR = document.createElement('tr');
     var classNameTD = document.createElement('td');
     classNameTD.textContent = className;
     classNameTD.classList.add('class-name');
+    var arrow = document.createElement('div');
+    arrow.classList.add('arrow');
+    classNameTD.appendChild(arrow);
     var classNameSpacerTD = document.createElement('td');
     classNameSpacerTD.colSpan = colSpan;
     classNameTR.appendChild(classNameTD);
@@ -127,7 +131,7 @@ function buildTable(objMembers) {
       [...document.getElementsByClassName(this.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
     }
     table.appendChild(classNameTR);
-    Object.keys(rows[className]).sort().forEach(memberName => {
+    memberNames.forEach(memberName => {
       var memberTR = document.createElement('tr');
       memberTR.classList.add(className + 'member');
       memberTR.classList.add('collapse');
