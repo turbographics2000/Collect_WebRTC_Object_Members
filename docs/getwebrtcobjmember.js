@@ -113,7 +113,7 @@ function buildTable(objMembers) {
   });
 
   Object.keys(rows).sort().forEach(className => {
-    var classNameTR = documeent.createElement('tr');
+    var classNameTR = document.createElement('tr');
     var classNameTD = document.createElement('td');
     classNameTD.colSpan = colSpan;
     classNameTD.classList.add('class-name');
