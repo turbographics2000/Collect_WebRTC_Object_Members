@@ -112,7 +112,7 @@ function buildTable(objMembers) {
     });
   });
 
-  rows.forEach(className => {
+  Object.keys(rows).sort().forEach(className => {
     var classNameTR = documeent.createElement('tr');
     var classNameTD = document.createElement('td');
     classNameTD.colSpan = colSpan;
