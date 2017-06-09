@@ -46,14 +46,14 @@ function getDocs() {
 function removeParamPattern(obj) {
   if (typeof obj !== 'object') return;
   Object.keys(obj).forEach(key => {
-    if (key === 'cs_param_pattern' || 
-      key === 'param_pattern' || 
+    if (key === 'cs_param_pattern' ||
+      key === 'param_pattern' ||
       key === 'HTMLIFrameElement' ||
       Object.keys(obj[key]).length === 0 ||
       (obj[key].Member && ((obj[key].Member.min && obj[key].Member.max) || (obj[key].Member.ideal && obj[key].Member.exact)))) {
       delete obj[key];
     } else {
-        removeParamPattern(obj[key]);
+      removeParamPattern(obj[key]);
     }
   });
 }
@@ -74,7 +74,7 @@ getDocs().then(docs => {
     if (window[className]) {
       var flg = false;
       Object.keys(window[className].prototype).forEach(memberName => {
-        if(memberName === 'toJSON') return;
+        if (memberName === 'toJSON') return;
         Object.keys(parseData[type][className]).forEach(memberType => {
           if (typeof parseData[type][className][memberType] !== 'object') return;
           if (Object.keys(parseData[type][className][memberType]).includes(memberName)) {
@@ -211,7 +211,6 @@ function buildTable(objMembers) {
             var memberTD = document.createElement('td');
             memberTD.id = browserName + version + className + memberName;
             memberTD.classList.add('member-null');
-            memberTD.classList.add('member-data');
             memberTR.appendChild(memberTD);
           });
         });
@@ -226,7 +225,7 @@ function buildTable(objMembers) {
         if (data[browserName][version][className] === null) return;
         Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
           var memberTD = document.createElement(browserName + version + className + memberName);
-          memberTD.classList.remove('member-null');
+          memberTD.classList.add('member-data');
           memberTD.classList.add(data[browserName][version][className][memberName]);
         });
       });
