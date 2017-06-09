@@ -152,6 +152,7 @@ function buildTable(objMembers) {
       var notImplimentTD = document.createElement('td');
       notImplimentTD.classList.add('class-notimpliment');
       notImplimentTD.textContent = '-';
+      classNameTR.appendChild(classNameTD);
       classNameTR.appendChild(notImplimentTD);
       table.appendChild(classNameTR);
     } else {
