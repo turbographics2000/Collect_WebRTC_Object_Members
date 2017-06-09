@@ -159,6 +159,7 @@ function buildTable(objMembers) {
     });
   });
 
+  window.tds = {};
   Object.keys(rows).sort().forEach(className => {
     var memberNames = rows[className] === null ? null : Object.keys(rows[className]).sort();
     var classNameTR = document.createElement('tr');
@@ -211,6 +212,7 @@ function buildTable(objMembers) {
             var memberTD = document.createElement('td');
             memberTD.id = browserName + version + className + memberName;
             memberTD.classList.add('member-null');
+            window.tds[browserName + version + className + memberName] = memberTD;
             memberTR.appendChild(memberTD);
           });
         });
@@ -224,13 +226,13 @@ function buildTable(objMembers) {
       Object.keys(data[browserName][version]).sort().forEach(className => {
         if (data[browserName][version][className] === null) return;
         Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
-          var memberTD = document.getElementById(browserName + version + className + memberName);
+          var memberTD = window.tds[browserName + version + className + memberName];
           memberTD.classList.add('member-data');
           memberTD.classList.add(data[browserName][version][className][memberName]);
         });
       });
     });
   });
-
+  delete window.tds;
   document.body.appendChild(table);
 }
