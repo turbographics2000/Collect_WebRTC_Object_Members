@@ -123,6 +123,9 @@ function buildTable(objMembers) {
     classNameSpacerTD.colSpan = colSpan;
     classNameTR.appendChild(classNameTD);
     classNameTR.appendChild(classNameSpacerTD);
+    classNameTR.onclick = function() {
+      document.getElementsByClassName(this.textContent + 'member').forEach(elm => elm.classList.toggle('collapse'));
+    }
     table.appendChild(classNameTR);
     Object.keys(rows[className]).sort().forEach(memberName => {
       var memberTR = document.createElement('tr');
@@ -130,6 +133,8 @@ function buildTable(objMembers) {
       memberTR.classList.add('membmer-row');
       memberTR.classList.add(rows[className][memberName]);
       memberNameTD.classList.add('member-name');
+      memberNameTD.classList.add(className + 'member');
+      memberNameTD.classList.add('collapse');
       memberNameTD.textContent = memberName;
       memberTR.appendChild(memberNameTD);
       Object.keys(saveData).sort().forEach(browserName => {
