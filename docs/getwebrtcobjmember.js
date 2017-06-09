@@ -74,13 +74,14 @@ getDocs().then(docs => {
     if (window[className]) {
       var flg = false;
       Object.keys(window[className].prototype).forEach(memberName => {
+        if(memberName === 'toJSON') return;
         Object.keys(parseData[type][className]).forEach(memberType => {
           if (typeof parseData[type][className][memberType] !== 'object') return;
           if (Object.keys(parseData[type][className][memberType]).includes(memberName)) {
             flg = true;
           }
         });
-        if (!flg || memberName !== 'toJSON') {
+        if (!flg) {
           legacyCnt++;
           objMembers[className][memberName] = TYPE_LEGACY;
         }
