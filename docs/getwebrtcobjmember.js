@@ -43,11 +43,21 @@ function getDocs() {
   return promise;
 }
 
+function removeParamPattern(obj) {
+  if(typeof obj !== 'string') return;
+  Object.keys(obj).forEach(key => {
+    if(key === 'cs_param_pattern' || key === 'param_pattern') {
+      delete obj[key];
+    }
+    removeParamPattern(obj[key]);
+  });
+}
+
 getDocs().then(docs => {
   var TYPE_SPEC = 'spec';
   var TYPE_NOTSPEC = 'notspec';
   var TYPE_LEGACY = 'legacy';
-  var parseData = WebIDLParse(docs);
+  var parseData = removeParamPattern(WebIDLParse(docs));
   var specObjMembers = {};
   objMembers = {};
   var legacyCnt = 0;
