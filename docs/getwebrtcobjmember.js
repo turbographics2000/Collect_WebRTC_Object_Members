@@ -142,8 +142,8 @@ function buildTable(objMembers) {
       });
     });
     classNameTR.onclick = function () {
-      [...document.getElementsByClassName(this.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
-      document.getElementsByClassName(this.textContent + 'arrow')[0].classList.toggle('down');
+      [...document.getElementsByClassName(this.firstChild.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
+      document.getElementsByClassName(this.firstChild.textContent + 'arrow')[0].classList.toggle('down');
     }
     table.appendChild(classNameTR);
     memberNames.forEach(memberName => {
