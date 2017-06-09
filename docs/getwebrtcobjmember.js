@@ -91,7 +91,8 @@ getDocs().then(docs => {
       Object.keys(parseData[type][className]).forEach(memberType => {
         if (typeof parseData[type][className][memberType] !== 'object') return;
         Object.keys(parseData[type][className][memberType]).forEach(memberName => {
-          if (memberName in window[className].prototype) {
+          if (memberName in window[className].prototype ||
+            className === 'NavigatorUserMedia' && memberName in navigator.mediaDevices.getUserMedia.prototype) {
             specCnt++;
             objMembers[className][memberName] = TYPE_SPEC;
           } else {
