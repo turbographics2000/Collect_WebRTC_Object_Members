@@ -77,6 +77,7 @@ function buildTable(objMembers) {
   var saveData = {};
 
   var table = document.createElement('table');
+  table.id = 'table-wrapper';
   var headerTR = document.createElement('tr');
   var headerSpacerTD = document.createElement('td');
   headerTR.appendChild(headerSpacerTD);
