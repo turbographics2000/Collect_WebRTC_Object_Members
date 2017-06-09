@@ -54,9 +54,9 @@ function removeParamPattern(obj) {
       key === 'InputDeviceInfo' ||
       key === 'Superclass' ||
       key.endsWith('Init') ||
-      Object.keys(obj[key]).length === 0 ||
-      (obj[key].Member && Object.keys(obj[key].Member).length === 0) ||
-      (obj[key].Member && ((obj[key].Member.min && obj[key].Member.max) || (obj[key].Member.ideal && obj[key].Member.exact)))) {
+      Object.keys(obj).length === 0 ||
+      (obj.Member && Object.keys(obj.Member).length === 0) ||
+      (obj.Member && ((obj.Member.min && obj.Member.max) || (obj.Member.ideal && obj.Member.exact)))) {
       delete obj[key];
     // } else {
     //   removeParamPattern(obj[key]);
