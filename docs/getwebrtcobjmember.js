@@ -45,6 +45,7 @@ function getDocs() {
 
 function removeParamPattern(obj) {
   if (typeof obj !== 'object') return;
+  removeParamPattern(obj[key]);
   Object.keys(obj).forEach(key => {
     if (key === 'cs_param_pattern' ||
       key === 'param_pattern' ||
@@ -57,8 +58,8 @@ function removeParamPattern(obj) {
       (obj[key].Member && Object.keys(obj[key].Member).length === 0) ||
       (obj[key].Member && ((obj[key].Member.min && obj[key].Member.max) || (obj[key].Member.ideal && obj[key].Member.exact)))) {
       delete obj[key];
-    } else {
-      removeParamPattern(obj[key]);
+    // } else {
+    //   removeParamPattern(obj[key]);
     }
   });
 }
