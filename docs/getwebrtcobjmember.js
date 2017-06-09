@@ -44,24 +44,21 @@ function getDocs() {
 }
 
 function removeParamPattern(obj) {
-  if (!obj || typeof obj !== 'object') return;
-  Object.keys(obj).forEach(key => {
-    removeParamPattern(obj[key]);
-    if (key === 'cs_param_pattern' ||
-      key === 'param_pattern' ||
-      key === 'HTMLIFrameElement' ||
-      key === 'Constraints' ||
-      key === 'InputDeviceInfo' ||
-      key === 'Superclass' ||
-      key.endsWith('Init') ||
-      Object.keys(obj).length === 0 ||
-      (obj.Member && Object.keys(obj.Member).length === 0) ||
-      (obj.Member && ((obj.Member.min && obj.Member.max) || (obj.Member.ideal && obj.Member.exact)))) {
-      delete obj[key];
-    // } else {
-    //   removeParamPattern(obj[key]);
-    }
-  });
+  // if (typeof obj !== 'object') return;
+  // Object.keys(obj).forEach(key => {
+  //   if (key === 'cs_param_pattern' ||
+  //     key === 'param_pattern' ||
+  //     key === 'HTMLIFrameElement' ||
+  //     key === 'Constraints' ||
+  //     key === 'InputDeviceInfo' ||
+  //     key.endsWith('Init') ||
+  //     Object.keys(obj[key]).length === 0 ||
+  //     (obj[key].Member && ((obj[key].Member.min && obj[key].Member.max) || (obj[key].Member.ideal && obj[key].Member.exact)))) {
+  //     delete obj[key];
+  //   } else {
+  //     removeParamPattern(obj[key]);
+  //   }
+  // });
 }
 
 getDocs().then(docs => {
