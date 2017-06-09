@@ -82,7 +82,7 @@ getDocs().then(docs => {
         });
       });
     } else {
-      objMembers[className] = null;
+      objMembers[className] = [];
     }
   }
 
@@ -131,7 +131,7 @@ function buildTable(objMembers) {
       saveData[browserName][version] = data[browserName][version];
       Object.keys(data[browserName][version]).sort().forEach(className => {
         rows[className] = {};
-        Object.keys(data[browserName][version][className] || []).sort().forEach(memberName => {
+        Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
           rows[className][memberName] = data[browserName][version][className][memberName];
         });
       });
