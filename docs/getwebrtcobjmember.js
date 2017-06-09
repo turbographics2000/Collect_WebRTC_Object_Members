@@ -50,7 +50,7 @@ getDocs().then(docs => {
           objMembers[className][memberName] = TYPE_LEGACY;
         }
       });
-      parseData[type][className].forEach(memberName => {
+      Object.keys(parseData[type][className]).forEach(memberName => {
         if (memberName in window[className].prototype) {
           specCnt++;
           objMembers[className][memberName] = TYPE_SPEC;
