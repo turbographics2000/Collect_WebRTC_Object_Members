@@ -81,6 +81,8 @@ getDocs().then(docs => {
           }
         });
       });
+    } else {
+      objMembers[className] = null;
     }
   }
 
