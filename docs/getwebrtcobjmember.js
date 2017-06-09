@@ -124,7 +124,7 @@ function buildTable(objMembers) {
     classNameTR.appendChild(classNameTD);
     classNameTR.appendChild(classNameSpacerTD);
     classNameTR.onclick = function() {
-      document.getElementsByClassName(this.textContent + 'member').forEach(elm => elm.classList.toggle('collapse'));
+      [...document.getElementsByClassName(this.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
     }
     table.appendChild(classNameTR);
     Object.keys(rows[className]).sort().forEach(memberName => {
