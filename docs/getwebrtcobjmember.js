@@ -132,7 +132,7 @@ function buildTable(objMembers) {
       Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
         var classImpCntTD = document.createElement('td');
         classImpCntTD.classList.add('imp-cnt');
-        classImpCntTD.textContent =  Object.keys(saveData[browserName][version][className]).filter(x => 'spec') + ' / ' + memberNames.length;
+        classImpCntTD.textContent =  Object.keys(saveData[browserName][version][className]).filter(x => x === 'spec') + ' / ' + memberNames.length;
         classNameTR.appendChild(classImpCntTD);
       });
     });
