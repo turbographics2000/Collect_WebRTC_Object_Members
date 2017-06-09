@@ -140,6 +140,7 @@ function buildTable(objMembers) {
   var rows = {};
   Object.keys(data).sort().forEach(browserName => {
     saveData[browserName] = data[browserName];
+    window.browserHeaders[browserName] = {};
     Object.keys(data[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
       var browserHeaderTD = document.createElement('td');
       browserHeaderTD.classList.add(browserName);
