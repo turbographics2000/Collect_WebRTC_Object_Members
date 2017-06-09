@@ -127,6 +127,7 @@ function buildTable(objMembers) {
       classNameTD.appendChild(arrow);
       classNameTR.style.cursor = 'pointer';
     }
+    classNameTR.appendChild(classNameTD);
     Object.keys(saveData).sort().forEach(browserName => {
       Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
         var classImpCntTD = document.createElement('td');
@@ -135,7 +136,6 @@ function buildTable(objMembers) {
         classNameTR.appendChild(classImpCntTD);
       });
     });
-    classNameTR.appendChild(classNameTD);
     classNameTR.onclick = function() {
       [...document.getElementsByClassName(this.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
       document.getElementsByClassName(this.textContent + 'arrow')[0].classList.toggle('down');
