@@ -211,6 +211,7 @@ function buildTable(objMembers) {
             var memberTD = document.createElement('td');
             memberTD.id = browserName + version + className + memberName;
             memberTD.classList.add('member-null');
+            memberTD.classList.add('member-data');
             memberTR.appendChild(memberTD);
           });
         });
