@@ -155,7 +155,7 @@ function buildTable(objMembers) {
         var classImpCntTD = document.createElement('td');
         classImpCntTD.classList.add('imp-cnt');
         var specCnt = Object.keys(saveData[browserName][version][className]).filter(x => saveData[browserName][version][className][x] === 'spec').length;
-        if(member.length) {
+        if(memberNames.length) {
           classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
           classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
         }
