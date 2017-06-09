@@ -192,9 +192,9 @@ function buildTable(objMembers) {
       classNameTD.appendChild(arrow);
       classNameTR.style.cursor = 'pointer';
       classNameTR.appendChild(classNameTD);
-      window.browserCounters[browserName] = {};
-      window.browserCounters[browserName][version] = { specCnt: 0, memberCnt: 0 };
       Object.keys(saveData).sort().forEach(browserName => {
+        window.browserCounters[browserName] = {};
+        window.browserCounters[browserName][version] = { specCnt: 0, memberCnt: 0 };
         Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
           var classImpCntTD = document.createElement('td');
           classImpCntTD.classList.add('imp-cnt');
@@ -265,7 +265,7 @@ function buildTable(objMembers) {
       header.appendChild(headerBar);
       var headerCnt = document.createElement('div');
       headerCnt.classList.add('header-cnt');
-      headerCnt.textContent =  specCnt + ' / ' + memberCnt;;
+      headerCnt.textContent = specCnt + ' / ' + memberCnt;;
       header.appendChild(headerCnt);
     });
   });
