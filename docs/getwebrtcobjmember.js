@@ -155,8 +155,10 @@ function buildTable(objMembers) {
         var classImpCntTD = document.createElement('td');
         classImpCntTD.classList.add('imp-cnt');
         var specCnt = Object.keys(saveData[browserName][version][className]).filter(x => saveData[browserName][version][className][x] === 'spec').length;
-        classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
-        classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
+        if(member.length) {
+          classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
+          classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
+        }
         classNameTR.appendChild(classImpCntTD);
       });
     });
