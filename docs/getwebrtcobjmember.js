@@ -47,16 +47,16 @@ getDocs().then(docs => {
       var flg = false;
       Object.keys(window[className].prototype).forEach(memberName => {
         Object.keys(parseData[type][className]).forEach(memberType => {
-          if(typeof parseData[type][className][memberType] !== 'object') return;
-          if(Object.keys(parseData[type][className][memberType]).includes(memberName)) {
+          if (typeof parseData[type][className][memberType] !== 'object') return;
+          if (Object.keys(parseData[type][className][memberType]).includes(memberName)) {
             flg = true;
           }
         });
+        if (!flg) {
+          legacyCnt++;
+          objMembers[className][memberName] = TYPE_LEGACY;
+        }
       });
-      if (!flg) {
-        legacyCnt++;
-        objMembers[className][memberName] = TYPE_LEGACY;
-      }
       Object.keys(parseData[type][className]).forEach(memberType => {
         if (typeof parseData[type][className][memberType] !== 'object') return;
         Object.keys(parseData[type][className][memberType]).forEach(memberName => {
