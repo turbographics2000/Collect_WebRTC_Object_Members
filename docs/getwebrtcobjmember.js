@@ -89,6 +89,7 @@ getDocs().then(docs => {
           objMembers[className][memberName] = TYPE_LEGACY;
         }
       });
+    }
       Object.keys(parseData[type][className]).forEach(memberType => {
         if (typeof parseData[type][className][memberType] !== 'object') return;
         Object.keys(parseData[type][className][memberType]).forEach(memberName => {
@@ -102,9 +103,9 @@ getDocs().then(docs => {
           }
         });
       });
-    } else {
-      objMembers[className] = null;
-    }
+    // } else {
+    //   objMembers[className] = null;
+    // }
   }
 
   Object.keys(parseData.Dictionary).forEach(className => collect('Dictionary', className));
