@@ -129,11 +129,11 @@ function buildTable(objMembers) {
     table.appendChild(classNameTR);
     Object.keys(rows[className]).sort().forEach(memberName => {
       var memberTR = document.createElement('tr');
+      memberNameTR.classList.add(className + 'member');
       var memberNameTD = document.createElement('td');
       memberTR.classList.add('membmer-row');
       memberTR.classList.add(rows[className][memberName]);
       memberNameTD.classList.add('member-name');
-      memberNameTD.classList.add(className + 'member');
       memberNameTD.classList.add('collapse');
       memberNameTD.textContent = memberName;
       memberTR.appendChild(memberNameTD);
