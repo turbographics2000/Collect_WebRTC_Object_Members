@@ -92,7 +92,8 @@ function buildTable(objMembers) {
     saveData[browserName] = data[browserName];
     Object.keys(data[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
       var browserHeaderTD = document.createElement('td');
-      browserHeaderTD.className = browserName;
+      browserHeaderTD.classList.add(browserName);
+      browserHeaderTD.classList.add('browser-header');
       var browserNameDiv = document.createElement('div');
       browserNameDiv.className = 'browser-name';
       browserNameDiv.textContent = browserName;
