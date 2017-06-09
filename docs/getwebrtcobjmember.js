@@ -194,7 +194,6 @@ function buildTable(objMembers) {
       classNameTR.appendChild(classNameTD);
       Object.keys(saveData).sort().forEach(browserName => {
         window.browserCounters[browserName] = {};
-        window.browserCounters[browserName][version] = { specCnt: 0, memberCnt: 0 };
         Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
           var classImpCntTD = document.createElement('td');
           classImpCntTD.classList.add('imp-cnt');
@@ -202,6 +201,7 @@ function buildTable(objMembers) {
           if (memberNames.length) {
             classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
             classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
+            window.browserCounters[browserName][version] = window.browserCounters[browserName][version] || { specCnt: 0, memberCnt: 0 };
             window.browserCounters[browserName][version].specCnt += specCnt;
             window.browserCounters[browserName][version].memberCnt += memberNames.length;
           }
