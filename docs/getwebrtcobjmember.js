@@ -127,8 +127,14 @@ function buildTable(objMembers) {
       classNameTD.appendChild(arrow);
       classNameTR.style.cursor = 'pointer';
     }
-    var classNameSpacerTD = document.createElement('td');
-    classNameSpacerTD.colSpan = colSpan;
+    Object.keys(saveData).sort().forEach(browserName => {
+      Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
+        var classImpCntTD = document.createElement('td');
+        classImpCntTD.classList.add('imp-cnt');
+        classImpCntTD.textContent =  Object.keys(saveData[browserName][version][className]).filter(x => 'spec') + ' / ' + memberNames.length;
+        classNameTR.appendChild(classImpCntTD);
+      });
+    });
     classNameTR.appendChild(classNameTD);
     classNameTR.appendChild(classNameSpacerTD);
     classNameTR.onclick = function() {
