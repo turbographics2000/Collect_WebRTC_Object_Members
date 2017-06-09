@@ -73,7 +73,7 @@ getDocs().then(docs => {
   var notSpecCnt = 0;
   var collect = function (type, className) {
     objMembers[className] = {};
-    if (window[className]) {
+    if (window[className] || className === 'NavigatorUserMedia') {
       var flg = false;
       Object.keys(window[className].prototype).forEach(memberName => {
         if (memberName === 'toJSON') return;
