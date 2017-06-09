@@ -44,14 +44,21 @@ getDocs().then(docs => {
   var collect = function (type, className) {
     objMembers[className] = {};
     if (window[className]) {
+      var flg = false;
       Object.keys(window[className].prototype).forEach(memberName => {
-        if (!Object.keys(parseData[type][className]).includes(memberName)) {
-          legacyCnt++;
-          objMembers[className][memberName] = TYPE_LEGACY;
-        }
+        Object.keys(parseData[type][className]).forEach(memberType => {
+          if(typeof parseData[type][className][memberType] !== 'object') return;
+          if(Object.keys(parseData[type][className][memberType]).includes(memberName)) {
+            flg = true;
+          }
+        });
       });
+      if (!flg) {
+        legacyCnt++;
+        objMembers[className][memberName] = TYPE_LEGACY;
+      }
       Object.keys(parseData[type][className]).forEach(memberType => {
-        if(typeof parseData[type][className][memberType] !== 'object') return;
+        if (typeof parseData[type][className][memberType] !== 'object') return;
         Object.keys(parseData[type][className][memberType]).forEach(memberName => {
           if (memberName in window[className].prototype) {
             specCnt++;
