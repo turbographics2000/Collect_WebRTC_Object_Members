@@ -44,12 +44,15 @@ function getDocs() {
 }
 
 function removeParamPattern(obj) {
-  if(typeof obj !== 'object') return;
+  if (typeof obj !== 'object') return;
   Object.keys(obj).forEach(key => {
-    if(key === 'cs_param_pattern' || key === 'param_pattern' || Object.keys(obj[key]).length === 0) {
+    if (key === 'cs_param_pattern' || 
+      key === 'param_pattern' || 
+      Object.keys(obj[key]).length === 0 ||
+      (obj[key].Member && ((obj[key].min && obj[key].max) || (obj[key].ideal && obj[key].exact)))) {
       delete obj[key];
     } else {
-      removeParamPattern(obj[key]);
+        removeParamPattern(obj[key]);
     }
   });
 }
