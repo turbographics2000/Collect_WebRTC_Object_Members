@@ -224,7 +224,7 @@ function buildTable(objMembers) {
       Object.keys(data[browserName][version]).sort().forEach(className => {
         if (data[browserName][version][className] === null) return;
         Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
-          var memberTD = document.createElement(browserName + version + className + memberName);
+          var memberTD = document.getElementById(browserName + version + className + memberName);
           memberTD.classList.add('member-data');
           memberTD.classList.add(data[browserName][version][className][memberName]);
         });
