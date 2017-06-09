@@ -210,7 +210,7 @@ function buildTable(objMembers) {
         memberTR.classList.add(className + 'member');
         memberTR.classList.add('collapse');
         var memberNameTD = document.createElement('td');
-        memberTR.classList.add('membmer-row');
+        memberTR.classList.add('member-row');
         memberTR.classList.add(rows[className][memberName]);
         memberNameTD.classList.add('member-name');
         memberNameTD.textContent = memberName;
