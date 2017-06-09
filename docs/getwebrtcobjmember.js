@@ -128,7 +128,7 @@ function buildTable(objMembers) {
     }
     table.appendChild(classNameTR);
     Object.keys(rows[className]).sort().forEach(memberName => {
-      var c = document.createElement('tr');
+      var memberTR = document.createElement('tr');
       memberTR.classList.add(className + 'member');
       var memberNameTD = document.createElement('td');
       memberTR.classList.add('membmer-row');
