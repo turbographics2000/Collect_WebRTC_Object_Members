@@ -120,9 +120,11 @@ function buildTable(objMembers) {
     var classNameTD = document.createElement('td');
     classNameTD.textContent = className;
     classNameTD.classList.add('class-name');
-    var arrow = document.createElement('div');
-    arrow.classList.add('arrow');
-    classNameTD.appendChild(arrow);
+    if(memberNames.length > 0) {
+      var arrow = document.createElement('div');
+      arrow.classList.add('arrow');
+      classNameTD.appendChild(arrow);
+    }
     var classNameSpacerTD = document.createElement('td');
     classNameSpacerTD.colSpan = colSpan;
     classNameTR.appendChild(classNameTD);
