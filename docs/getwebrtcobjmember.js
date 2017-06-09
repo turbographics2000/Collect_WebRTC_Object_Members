@@ -48,6 +48,7 @@ function removeParamPattern(obj) {
   Object.keys(obj).forEach(key => {
     if (key === 'cs_param_pattern' || 
       key === 'param_pattern' || 
+      key === 'HTMLIFrameElement' ||
       Object.keys(obj[key]).length === 0 ||
       (obj[key].Member && ((obj[key].Member.min && obj[key].Member.max) || (obj[key].Member.ideal && obj[key].Member.exact)))) {
       delete obj[key];
@@ -166,7 +167,7 @@ function buildTable(objMembers) {
     if (memberNames === null) {
       var notImplimentTD = document.createElement('td');
       notImplimentTD.classList.add('class-notimpliment');
-      notImplimentTD.textContent = '-';
+      notImplimentTD.textContent = 'x';
       classNameTR.appendChild(classNameTD);
       classNameTR.appendChild(notImplimentTD);
       table.appendChild(classNameTR);
