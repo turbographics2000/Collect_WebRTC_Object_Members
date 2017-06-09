@@ -89,19 +89,19 @@ function buildTable(objMembers) {
   var rows = {};
   Object.keys(data).sort().forEach(browserName => {
     saveData[browserName] = data[browserName];
-    var browserHeaderTD = document.createElement('td');
-    browserHeaderTD.className = browserName;
-    var browserNameDiv = document.createElement('div');
-    browserNameDiv.className = 'browser-name';
-    browserNameDiv.textContent = browserName;
-    var browserVersionDiv = document.createElement('div');
-    browserVersionDiv.className = 'browser-version';
-    browserVersionDiv.textContent = version;
-    browserHeaderTD.appendChild(browserNameDiv);
-    browserHeaderTD.appendChild(browserVersionDiv);
-    headerTR.appendChild(browserHeaderTD);
-
     Object.keys(data[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
+      var browserHeaderTD = document.createElement('td');
+      browserHeaderTD.className = browserName;
+      var browserNameDiv = document.createElement('div');
+      browserNameDiv.className = 'browser-name';
+      browserNameDiv.textContent = browserName;
+      var browserVersionDiv = document.createElement('div');
+      browserVersionDiv.className = 'browser-version';
+      browserVersionDiv.textContent = browserMajorVersion;
+      browserHeaderTD.appendChild(browserNameDiv);
+      browserHeaderTD.appendChild(browserVersionDiv);
+      headerTR.appendChild(browserHeaderTD);
+
       saveData[browserName][version] = data[browserName][version];
       Object.keys(data[browserName][version]).sort().forEach(className => {
         rows[className] = {};
