@@ -169,7 +169,6 @@ function buildTable(objMembers) {
     if (memberNames === null) {
       var notImplimentTD = document.createElement('td');
       notImplimentTD.classList.add('class-notimpliment');
-      notImplimentTD.textContent = 'x';
       classNameTR.appendChild(classNameTD);
       classNameTR.appendChild(notImplimentTD);
       table.appendChild(classNameTR);
