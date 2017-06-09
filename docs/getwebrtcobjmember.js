@@ -49,7 +49,7 @@ function removeParamPattern(obj) {
     if (key === 'cs_param_pattern' || 
       key === 'param_pattern' || 
       Object.keys(obj[key]).length === 0 ||
-      (obj[key].Member && ((obj[key].min && obj[key].max) || (obj[key].ideal && obj[key].exact)))) {
+      (obj[key].Member && ((obj[key].Member.min && obj[key].Member.max) || (obj[key].Member.ideal && obj[key].Member.exact)))) {
       delete obj[key];
     } else {
         removeParamPattern(obj[key]);
