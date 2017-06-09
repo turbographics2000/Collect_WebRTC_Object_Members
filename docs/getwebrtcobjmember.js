@@ -50,14 +50,16 @@ getDocs().then(docs => {
           objMembers[className][memberName] = TYPE_LEGACY;
         }
       });
-      Object.keys(parseData[type][className]).forEach(memberName => {
-        if (memberName in window[className].prototype) {
-          specCnt++;
-          objMembers[className][memberName] = TYPE_SPEC;
-        } else {
-          notSpecCnt++;
-          objMembers[className][memberName] = TYPE_NOTSPEC;
-        }
+      Object.keys(parseData[type][className]).forEach(memberType => {
+        Object.keys(parseData[type][className][memberType]).forEach(memberName => {
+          if (memberName in window[className].prototype) {
+            specCnt++;
+            objMembers[className][memberName] = TYPE_SPEC;
+          } else {
+            notSpecCnt++;
+            objMembers[className][memberName] = TYPE_NOTSPEC;
+          }
+        });
       });
     }
   }
@@ -120,7 +122,7 @@ function buildTable(objMembers) {
     var classNameTD = document.createElement('td');
     classNameTD.textContent = className;
     classNameTD.classList.add('class-name');
-    if(memberNames.length > 0) {
+    if (memberNames.length > 0) {
       var arrow = document.createElement('div');
       arrow.classList.add('arrow');
       arrow.classList.add(className + 'arrow');
@@ -132,14 +134,14 @@ function buildTable(objMembers) {
       Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
         var classImpCntTD = document.createElement('td');
         classImpCntTD.classList.add('imp-cnt');
-        classImpCntTD.textContent =  Object.keys(saveData[browserName][version][className]).filter(x =>{
+        classImpCntTD.textContent = Object.keys(saveData[browserName][version][className]).filter(x => {
           console.log(saveData[browserName][version][className][x]);
           return saveData[browserName][version][className][x] === 'spec';
         }).length + ' / ' + memberNames.length;
         classNameTR.appendChild(classImpCntTD);
       });
     });
-    classNameTR.onclick = function() {
+    classNameTR.onclick = function () {
       [...document.getElementsByClassName(this.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
       document.getElementsByClassName(this.textContent + 'arrow')[0].classList.toggle('down');
     }
