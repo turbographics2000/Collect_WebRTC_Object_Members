@@ -167,6 +167,7 @@ function buildTable(objMembers) {
   });
 
   window.tds = {};
+  window.arrows = {};
   Object.keys(rows).sort().forEach(className => {
     var memberNames = rows[className] === null ? null : Object.keys(rows[className]).sort();
     var classNameTR = document.createElement('tr');
@@ -181,7 +182,7 @@ function buildTable(objMembers) {
       table.appendChild(classNameTR);
     } else {
       var arrow = document.createElement('div');
-      arrow.id = className + 'arrow';
+      window.arrows[className] = arrow;
       arrow.classList.add('arrow');
       arrow.classList.add(className + 'arrow');
       classNameTD.appendChild(arrow);
@@ -233,9 +234,8 @@ function buildTable(objMembers) {
       Object.keys(data[browserName][version]).sort().forEach(className => {
         if (data[browserName][version][className] === null) return;
         members = Object.keys(data[browserName][version][className]).sort();
-        if(members.length === 0) {
-          var arrow = document.getElementById(className + 'arrow');
-          if(arrow) arrow.style.display = 'none';
+        if(members.length === 0 || window.arrows[className]) {
+          window.arrows[className].parentElement.removeChild(window.arrows[className]);
         }
         members.forEach(memberName => {
           var memberTD = window.tds[browserName + version + className + memberName];
@@ -246,5 +246,6 @@ function buildTable(objMembers) {
     });
   });
   delete window.tds;
+  delete window.arrows;
   document.body.appendChild(table);
 }
