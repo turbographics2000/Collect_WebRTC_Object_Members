@@ -181,6 +181,7 @@ function buildTable(objMembers) {
       table.appendChild(classNameTR);
     } else {
       var arrow = document.createElement('div');
+      arrow.id = className + 'arrow';
       arrow.classList.add('arrow');
       arrow.classList.add(className + 'arrow');
       classNameTD.appendChild(arrow);
@@ -231,7 +232,12 @@ function buildTable(objMembers) {
     Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
       Object.keys(data[browserName][version]).sort().forEach(className => {
         if (data[browserName][version][className] === null) return;
-        Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
+        members = Object.keys(data[browserName][version][className]).sort();
+        if(members.length === 0) {
+          var arrow = document.getElementById(className + 'arrow');
+          if(arrow) arrow.style.display = 'none';
+        }
+        members.forEach(memberName => {
           var memberTD = window.tds[browserName + version + className + memberName];
           memberTD.classList.add('member-data');
           memberTD.classList.add(data[browserName][version][className][memberName]);
