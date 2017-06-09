@@ -51,6 +51,7 @@ getDocs().then(docs => {
         }
       });
       Object.keys(parseData[type][className]).forEach(memberType => {
+        if(typeof parseData[type][className][memberType] !== 'object') return;
         Object.keys(parseData[type][className][memberType]).forEach(memberName => {
           if (memberName in window[className].prototype) {
             specCnt++;
