@@ -57,7 +57,8 @@ getDocs().then(docs => {
   var TYPE_SPEC = 'spec';
   var TYPE_NOTSPEC = 'notspec';
   var TYPE_LEGACY = 'legacy';
-  var parseData = removeParamPattern(WebIDLParse(docs));
+  var parseData = WebIDLParse(docs);
+  removeParamPattern(parseData);
   var specObjMembers = {};
   objMembers = {};
   var legacyCnt = 0;
@@ -98,10 +99,7 @@ getDocs().then(docs => {
     }
   }
 
-  Object.keys(parseData.Dictionary).forEach(className => {
-
-    collect('Dictionary', className);
-  });
+  Object.keys(parseData.Dictionary).forEach(className => collect('Dictionary', className));
   Object.keys(parseData.Interface).forEach(className => collect('Interface', className));
 
   buildTable(objMembers);
