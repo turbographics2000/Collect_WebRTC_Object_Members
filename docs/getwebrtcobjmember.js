@@ -123,7 +123,7 @@ function buildTable(objMembers) {
       var memberTR = document.createElement('tr');
       var memberNameTD = document.createElement('td');
       memberTR.classList.add('membmer-row');
-      memberTR.classList.add(rows[className][memberName].type);
+      memberTR.classList.add(rows[className][memberName]);
       memberNameTD.classList.add('member-name');
       memberNameTD.textContent = memberName;
       memberTR.appendChild(memberNameTD);
