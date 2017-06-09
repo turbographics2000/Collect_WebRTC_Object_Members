@@ -82,7 +82,7 @@ getDocs().then(docs => {
         });
       });
     } else {
-      objMembers[className] = [];
+      objMembers[className] = null;
     }
   }
 
@@ -130,65 +130,75 @@ function buildTable(objMembers) {
 
       saveData[browserName][version] = data[browserName][version];
       Object.keys(data[browserName][version]).sort().forEach(className => {
-        rows[className] = {};
-        Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
-          rows[className][memberName] = data[browserName][version][className][memberName];
-        });
+        if (data[browserName][version][className] === null) {
+          rows[className] = null;
+        } else {
+          rows[className] = {};
+          Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
+            rows[className][memberName] = data[browserName][version][className][memberName];
+          });
+        }
       });
     });
   });
 
   Object.keys(rows).sort().forEach(className => {
-    var memberNames = Object.keys(rows[className]).sort();
+    var memberNames = rows[className] === null ? null : Object.keys(rows[className]).sort();
     var classNameTR = document.createElement('tr');
     var classNameTD = document.createElement('td');
     classNameTD.textContent = className;
     classNameTD.classList.add('class-name');
-    if (memberNames.length > 0) {
+    if (memberNames === null) {
+      var notImplimentTD = document.createElement('td');
+      notImplimentTD.classList.add('class-notimpliment');
+      notImplimentTD.textContent = '-';
+      classNameTR.appendChild(notImplimentTD);
+      table.appendChild(classNameTR);
+    } else {
       var arrow = document.createElement('div');
       arrow.classList.add('arrow');
       arrow.classList.add(className + 'arrow');
       classNameTD.appendChild(arrow);
       classNameTR.style.cursor = 'pointer';
-    }
-    classNameTR.appendChild(classNameTD);
-    Object.keys(saveData).sort().forEach(browserName => {
-      Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
-        var classImpCntTD = document.createElement('td');
-        classImpCntTD.classList.add('imp-cnt');
-        var specCnt = Object.keys(saveData[browserName][version][className]).filter(x => saveData[browserName][version][className][x] === 'spec').length;
-        if(memberNames.length) {
-          classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
-          classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
-        }
-        classNameTR.appendChild(classImpCntTD);
-      });
-    });
-    classNameTR.onclick = function () {
-      [...document.getElementsByClassName(this.firstChild.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
-      document.getElementsByClassName(this.firstChild.textContent + 'arrow')[0].classList.toggle('down');
-    }
-    table.appendChild(classNameTR);
-    memberNames.forEach(memberName => {
-      var memberTR = document.createElement('tr');
-      memberTR.classList.add(className + 'member');
-      memberTR.classList.add('collapse');
-      var memberNameTD = document.createElement('td');
-      memberTR.classList.add('membmer-row');
-      memberTR.classList.add(rows[className][memberName]);
-      memberNameTD.classList.add('member-name');
-      memberNameTD.textContent = memberName;
-      memberTR.appendChild(memberNameTD);
+      classNameTR.appendChild(classNameTD);
       Object.keys(saveData).sort().forEach(browserName => {
-        Object.keys(saveData[browserName]).sort().forEach(version => {
-          var memberTD = document.createElement('td');
-          memberTD.id = browserName + version + className + memberName;
-          memberTD.classList.add('member-null');
-          memberTR.appendChild(memberTD);
+        Object.keys(saveData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
+          var classImpCntTD = document.createElement('td');
+          classImpCntTD.classList.add('imp-cnt');
+          var specCnt = Object.keys(saveData[browserName][version][className]).filter(x => saveData[browserName][version][className][x] === 'spec').length;
+          if (memberNames.length) {
+            classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
+            classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
+          }
+          classNameTR.appendChild(classImpCntTD);
         });
       });
-      table.appendChild(memberTR);
-    });
+      classNameTR.onclick = function () {
+        [...document.getElementsByClassName(this.firstChild.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
+        document.getElementsByClassName(this.firstChild.textContent + 'arrow')[0].classList.toggle('down');
+      }
+      table.appendChild(classNameTR);
+      memberNames.forEach(memberName => {
+        var memberTR = document.createElement('tr');
+        memberTR.classList.add(className + 'member');
+        memberTR.classList.add('collapse');
+        var memberNameTD = document.createElement('td');
+        memberTR.classList.add('membmer-row');
+        memberTR.classList.add(rows[className][memberName]);
+        memberNameTD.classList.add('member-name');
+        memberNameTD.textContent = memberName;
+        memberTR.appendChild(memberNameTD);
+        Object.keys(saveData).sort().forEach(browserName => {
+          Object.keys(saveData[browserName]).sort().forEach(version => {
+            var memberTD = document.createElement('td');
+            memberTD.id = browserName + version + className + memberName;
+            memberTD.classList.add('member-null');
+            memberTR.appendChild(memberTD);
+          });
+        });
+        table.appendChild(memberTR);
+      });
+    }
   });
 
   Object.keys(saveData).sort().forEach(browserName => {
