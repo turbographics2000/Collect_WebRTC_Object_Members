@@ -123,6 +123,7 @@ function buildTable(objMembers) {
     if(memberNames.length > 0) {
       var arrow = document.createElement('div');
       arrow.classList.add('arrow');
+      arrow.classList.add(className + 'arrow');
       classNameTD.appendChild(arrow);
     }
     var classNameSpacerTD = document.createElement('td');
@@ -131,6 +132,7 @@ function buildTable(objMembers) {
     classNameTR.appendChild(classNameSpacerTD);
     classNameTR.onclick = function() {
       [...document.getElementsByClassName(this.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
+      document.getElementsByClassName(this.textContent + 'arrow')[0].classList.toggle('down');
     }
     table.appendChild(classNameTR);
     memberNames.forEach(memberName => {
