@@ -80,7 +80,7 @@ getDocs().then(docs => {
             flg = true;
           }
         });
-        if (!flg) {
+        if (!flg || memberName !== 'toJSON') {
           legacyCnt++;
           objMembers[className][memberName] = TYPE_LEGACY;
         }
