@@ -11,7 +11,7 @@ function heatColor(alpha) {
   var r = rA * alpha + rB * (1 - alpha) | 0;
   var g = gA * alpha + gB * (1 - alpha) | 0;
   var b = bA * alpha + bB * (1 - alpha) | 0;
-  return ('rgb(' + r0 + ',' + g + ',' + b + ')');
+  return ('rgb(' + r + ',' + g + ',' + b + ')');
 }
 var pages = [
   {
