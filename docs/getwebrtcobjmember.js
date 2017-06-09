@@ -44,7 +44,7 @@ function getDocs() {
 }
 
 function removeParamPattern(obj) {
-  if (typeof obj !== 'object') return;
+  if (!obj || typeof obj !== 'object') return;
   Object.keys(obj).forEach(key => {
     removeParamPattern(obj[key]);
     if (key === 'cs_param_pattern' ||
