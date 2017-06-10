@@ -106,9 +106,7 @@ function collectImplementData() {
             Object.keys(classPrototype).forEach(memberName => {
                 if (!Object.keys(apiData[type][className]).includes(memberName)) {
                     legacyCnt++;
-                    if(memberName === 'addStream') {
-                        debugger;
-                    }
+                    if(currentImplementData[className] === true) currentImplementData[className] = {};
                     currentImplementData[className][memberName] = TYPE_LEGACY;
                 }
             });
