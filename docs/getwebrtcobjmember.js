@@ -170,9 +170,7 @@ function buildTable() {
             implementData[browserName][version] = implementData[browserName][version];
             Object.keys(implementData[browserName][version]).sort().forEach(className => {
                 rows[className] = rows[className] || {};
-                if(className === 'RTCPeerConnection') debugger;
                 Object.keys(implementData[browserName][version][className]).sort().forEach(memberName => {
-                    if (memberName === 'addStream') debugger;
                     rows[className][memberName] = implementData[browserName][version][className][memberName];
                 });
             });
@@ -181,7 +179,6 @@ function buildTable() {
 
     Object.keys(rows).sort().forEach(className => {
         var memberNames = Object.keys(rows[className]).sort();
-        if (memberNames.includes('addStream')) debugger;
         var classNameTR = document.createElement('tr');
         var classNameTD = document.createElement('td');
         classNameTD.textContent = className;
@@ -216,8 +213,6 @@ function buildTable() {
         }
         table.appendChild(classNameTR);
         memberNames.forEach(memberName => {
-            if (memberName === 'addStream') debugger;
-
             var memberTR = document.createElement('tr');
             memberTR.classList.add(className + 'member');
             memberTR.classList.add('collapse');
