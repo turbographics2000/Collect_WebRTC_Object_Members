@@ -106,7 +106,7 @@ function collectImplementData() {
             Object.keys(classPrototype).forEach(memberName => {
                 if (!Object.keys(apiData[type][className]).includes(memberName)) {
                     legacyCnt++;
-                    if(currentImplementData[className] === true) currentImplementData[className] = {};
+                    if (currentImplementData[className] === true) currentImplementData[className] = {};
                     currentImplementData[className][memberName] = TYPE_LEGACY;
                 }
             });
@@ -225,6 +225,8 @@ function buildTable() {
             }
             table.appendChild(classNameTR);
             memberNames.forEach(memberName => {
+                if (memberName === 'addStream') debugger;
+
                 var memberTR = document.createElement('tr');
                 memberTR.classList.add(className + 'member');
                 memberTR.classList.add('collapse');
@@ -260,7 +262,7 @@ function buildTable() {
                 }
                 members.forEach(memberName => {
                     var memberTD = window.tds[browserName + version + className + memberName];
-                    if(!memberTD) debugger;
+                    if (!memberTD) debugger;
                     memberTD.classList.add('member-data');
                     memberTD.classList.add(implementData[browserName][version][className][memberName]);
                 });
