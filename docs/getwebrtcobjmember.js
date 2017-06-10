@@ -88,6 +88,7 @@ function collectImplementData() {
     var TYPE_LEGACY = 'legacy';
     var currentImplementData = {};
     var totalCnt = 0;
+    var legacy = 0;
     var specCnt = 0;
     var notSpecCnt = 0;
 
@@ -97,6 +98,14 @@ function collectImplementData() {
         var classPrototype = window[className] ? window[className].prototype : null;
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
         if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
+        if(window[className]) {
+            Object.keys(window[className].prototype).forEach(memberName => {
+                if(!Object.keys(apiData[type][className]).includes(memberName)) {
+                    legacy++;
+                    currentImplementData[className][memberName] = TYPE_LEGACY;
+                }
+            });
+        }
         Object.keys(apiData[type][className]).sort().forEach(memberType => {
             if (typeof apiData[type][className][memberType] !== 'object') return;
             Object.keys(apiData[type][className][memberType]).sort().forEach(memberName => {
@@ -106,10 +115,6 @@ function collectImplementData() {
                     currentImplementData[className][memberName] = TYPE_SPEC;
                 } else {
                     notSpecCnt++;
-                    if(browser.name === 'Safari' && memberName === 'addStream') {
-                        browser.name = 'Safari_NoLegacy'
-                        implementData[browser.name] = implementData[browser.name] || {};
-                    }
                     currentImplementData[className][memberName] = TYPE_NOTSPEC;
                 }
                 totalCnt++;
