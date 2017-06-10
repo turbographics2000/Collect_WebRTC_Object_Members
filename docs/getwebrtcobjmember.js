@@ -77,22 +77,22 @@ getDocs().then(docs => {
     var classPrototype = window[className] ? window[className].prototype : null;
     if (className === 'NavigatorUserMedia') classPrototype = navigator;
     if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
-    if (classPrototype) {
-      var flg = false;
-      Object.keys(classPrototype).forEach(memberName => {
-        if (memberName === 'toJSON') return;
-        Object.keys(parseData[type][className]).forEach(memberType => {
-          if (typeof parseData[type][className][memberType] !== 'object') return;
-          if (Object.keys(parseData[type][className][memberType]).includes(memberName)) {
-            flg = true;
-          }
-        });
-        if (!flg) {
-          legacyCnt++;
-          objMembers[className][memberName] = TYPE_LEGACY;
-        }
-      });
-    }
+    // if (classPrototype) {
+    //   var flg = false;
+    //   Object.keys(classPrototype).forEach(memberName => {
+    //     if (memberName === 'toJSON') return;
+    //     Object.keys(parseData[type][className]).forEach(memberType => {
+    //       if (typeof parseData[type][className][memberType] !== 'object') return;
+    //       if (Object.keys(parseData[type][className][memberType]).includes(memberName)) {
+    //         flg = true;
+    //       }
+    //     });
+    //     if (!flg) {
+    //       legacyCnt++;
+    //       objMembers[className][memberName] = TYPE_LEGACY;
+    //     }
+    //   });
+    // }
     Object.keys(parseData[type][className]).forEach(memberType => {
       if (typeof parseData[type][className][memberType] !== 'object') return;
       Object.keys(parseData[type][className][memberType]).forEach(memberName => {
