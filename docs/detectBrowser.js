@@ -2,20 +2,21 @@ function detectBrowser(userAgentString) {
   if (!userAgentString) return null;
 
   var browsers = [
-    [ 'edge', /Edge\/([0-9\._]+)/ ],
-    [ 'yandexbrowser', /YaBrowser\/([0-9\._]+)/ ],
-    [ 'chrome', /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/ ],
-    [ 'crios', /CriOS\/([0-9\.]+)(:?\s|$)/ ],
-    [ 'firefox', /Firefox\/([0-9\.]+)(?:\s|$)/ ],
-    [ 'opera', /Opera\/([0-9\.]+)(?:\s|$)/ ],
-    [ 'opera', /OPR\/([0-9\.]+)(:?\s|$)$/ ],
-    [ 'ie', /Trident\/7\.0.*rv\:([0-9\.]+)\).*Gecko$/ ],
-    [ 'ie', /MSIE\s([0-9\.]+);.*Trident\/[4-7].0/ ],
-    [ 'ie', /MSIE\s(7\.0)/ ],
-    [ 'bb10', /BB10;\sTouch.*Version\/([0-9\.]+)/ ],
-    [ 'android', /Android\s([0-9\.]+)/ ],
-    [ 'ios', /Version\/([0-9\._]+).*Mobile.*Safari.*/ ],
-    [ 'safari', /Version\/([0-9\._]+).*Safari/ ]
+    [ 'Edge', /Edge\/([0-9\._]+)/ ],
+    [ 'YandexBrowser', /YaBrowser\/([0-9\._]+)/ ],
+    [ 'Vivaldi', /Vivaldi\/([0-9\._]+)/ ],
+    [ 'Chrome', /(?!Chrom.*OPR)Chrom(?:e|ium)\/([0-9\.]+)(:?\s|$)/ ],
+    [ 'CriOS', /CriOS\/([0-9\.]+)(:?\s|$)/ ],
+    [ 'Firefox', /Firefox\/([0-9\.]+)(?:\s|$)/ ],
+    [ 'Opera', /Opera\/([0-9\.]+)(?:\s|$)/ ],
+    [ 'Opera', /OPR\/([0-9\.]+)(:?\s|$)$/ ],
+    [ 'IE', /Trident\/7\.0.*rv\:([0-9\.]+)\).*Gecko$/ ],
+    [ 'IE', /MSIE\s([0-9\.]+);.*Trident\/[4-7].0/ ],
+    [ 'IE', /MSIE\s(7\.0)/ ],
+    [ 'BlackBerry10', /BB10;\sTouch.*Version\/([0-9\.]+)/ ],
+    [ 'Android', /Android\s([0-9\.]+)/ ],
+    [ 'iOS', /Version\/([0-9\._]+).*Mobile.*Safari.*/ ],
+    [ 'Safari', /Version\/([0-9\._]+).*Safari/ ]
   ];
 
   return browsers.map(function (rule) {

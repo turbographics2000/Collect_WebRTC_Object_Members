@@ -1,22 +1,72 @@
-var browser = detectBrowser(navigator.userAgent);
-var browserMajorVersion = parseInt(browser.version);
 window.browserHeaders = {};
 window.browserCounters = {};
 window.tds = {};
 window.arrows = {};
 
-var dataRef = firebase.database().ref('data');
-dataRef.once('value', function (snap) {
-    var data = snap.val();
-    if (data && data[browser.name] && data[browser.name][browserMajorVersion]) {
-        buildTable(data);
-    } else {
-        data = data || {};
-        data[browser.name] = data[browser.name] || {};
-        data[browser.name][browserMajorVersion] = {};
-        collectImplimentData(data);
+var browser = detectBrowser(navigator.userAgent);
+var browserMajorVersion = parseInt(browser.version);
+
+var apiData = null;
+var implementData = null;
+var pages = [
+    {
+        url: 'https://www.w3.org/TR/webrtc/',
+        legacyElementId: 'legacy-interface-extensions'
+    },
+    {
+        url: 'https://www.w3.org/TR/mediacapture-streams/',
+        legacyElementId: 'navigatorusermedia-interface-extensions'
     }
-});
+];
+
+if (!browser.name.includes('ie')) {
+    var fbRef = firebase.database().ref('/');
+    fbRef.once('value').then(snap => {
+        var snapData = snap.val();
+        implementData = snapData.data || {};
+        implementData[browser.name] = implementData[browser.name] || {};
+        implementData[browser.name][browserMajorVersion] = {};
+
+        if (browser.name !== 'edge') {
+            var docs = [];
+            var parser = new DOMParser();
+            var promise = Promise.resolve();
+            pages.forEach(page => {
+                promise = promise
+                    .then(_ => fetch(page.url))
+                    .then(res => res.text())
+                    .then(txt => {
+                        var doc = parser.parseFromString(txt, 'text/html');
+                        var legacySection = doc.getElementById(page.legacyElementId);
+                        if (legacySection) legacySection.parentElement.removeChild(legacySection);
+                        docs.push(doc);
+                        return docs;
+                    });
+            });
+            return promise.then(docs => {
+                var parseData = WebIDLParse(docs);
+                if (JSON.stringify(apiData) !== JSON.stringify(parseData)) {
+                    firebase.database().ref('/apiData').set(parseData);
+                }
+                apiData = parseData;
+            });
+        } else {
+            return new Promise((resolve, reject) => {
+                if (snapData.apiData) {
+                    apiData = snapData.apiData;
+                    resolve();
+                } else {
+                    reject('No Api Data');
+                }
+            });
+        }
+    }).then(_ => {
+        collectImplementData();
+        buildTable();
+    }).catch(err => {
+        console.log(err);
+    });
+}
 
 function heatColor(alpha) {
     var rA = 0x44;
@@ -30,69 +80,52 @@ function heatColor(alpha) {
     var b = bA * alpha + bB * (1 - alpha) | 0;
     return ('rgb(' + r + ',' + g + ',' + b + ')');
 }
-var pages = [
-    {
-        url: 'https://www.w3.org/TR/webrtc/',
-        legacyElementId: 'legacy-interface-extensions'
-    },
-    {
-        url: 'https://www.w3.org/TR/mediacapture-streams/',
-        legacyElementId: 'navigatorusermedia-interface-extensions'
-    }
-];
 
-function collectImplimentData(data) {
-    var docs = [];
-    var parser = new DOMParser();
-    var promise = Promise.resolve();
-    pages.forEach(page => {
-        promise = promise
-            .then(_ => fetch(page.url))
-            .then(res => res.text())
-            .then(txt => {
-                var doc = parser.parseFromString(txt, 'text/html');
-                var legacySection = doc.getElementById(page.legacyElementId);
-                if (legacySection) legacySection.parentElement.removeChild(legacySection);
-                docs.push(doc);
-                return docs;
-            });
-    });
-    promise.then(docs => {
-        var TYPE_SPEC = 'spec';
-        var TYPE_NOTSPEC = 'notspec';
-        var TYPE_LEGACY = 'legacy';
-        var parseData = WebIDLParse(docs);
-        var browserImplementData = {};
-        var legacyCnt = 0;
-        var specCnt = 0;
-        var notSpecCnt = 0;
-        var collect = function (type, className) {
-            browserImplementData[className] = true;
-            var classPrototype = window[className] ? window[className].prototype : null;
-            if (className === 'NavigatorUserMedia') classPrototype = navigator;
-            if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
-            Object.keys(parseData[type][className]).forEach(memberType => {
-                if (typeof parseData[type][className][memberType] !== 'object') return;
-                Object.keys(parseData[type][className][memberType]).forEach(memberName => {
-                    if (browserImplementData[className] === true) browserImplementData[className] = {};
-                    if (classPrototype && (memberName in classPrototype || classPrototype[memberName])) {
-                        specCnt++;
-                        browserImplementData[className][memberName] = TYPE_SPEC;
-                    } else {
-                        notSpecCnt++;
-                        browserImplementData[className][memberName] = TYPE_NOTSPEC;
+
+function collectImplementData() {
+    var TYPE_SPEC = 'spec';
+    var TYPE_NOTSPEC = 'notspec';
+    var TYPE_LEGACY = 'legacy';
+    var currentImplementData = {};
+    var totalCnt = 0;
+    var specCnt = 0;
+    var notSpecCnt = 0;
+
+    var collect = function (type, className) {
+        currentImplementData[className] = true;
+        var classPrototype = window[className] ? window[className].prototype : null;
+        if (className === 'NavigatorUserMedia') classPrototype = navigator;
+        if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
+        Object.keys(apiData[type][className]).sort().forEach(memberType => {
+            if (typeof apiData[type][className][memberType] !== 'object') return;
+            Object.keys(apiData[type][className][memberType]).sort().forEach(memberName => {
+                if (currentImplementData[className] === true) currentImplementData[className] = {};
+                if (classPrototype && (memberName in classPrototype || classPrototype[memberName])) {
+                    specCnt++;
+                    currentImplementData[className][memberName] = TYPE_SPEC;
+                } else {
+                    notSpecCnt++;
+                    if(browserName === 'Safari' && memberName === 'addStream') {
+                        browser.name = 'Safari_NoLegacy'
+                        implementData[browser.name] = implementData[browser.name] || {};
                     }
-                });
+                    currentImplementData[className][memberName] = TYPE_NOTSPEC;
+                }
+                totalCnt++;
             });
-        }
-        Object.keys(parseData.Dictionary).forEach(className => collect('Dictionary', className));
-        Object.keys(parseData.Interface).forEach(className => collect('Interface', className));
-        data[browser.name][browserMajorVersion] = browserImplementData;
-        buildTable(data, true);
-    });
+        });
+    }
+    Object.keys(apiData.Interface).sort().forEach(className => collect('Interface', className));
+    Object.keys(apiData.Dictionary).sort().forEach(className => collect('Dictionary', className));
+    console.log('total:' + totalCnt, 'specCnt:' +specCnt, 'notSpecCnt:' + notSpecCnt);
+    if (JSON.stringify(implementData[browser.name][browserMajorVersion]) !== JSON.stringify(currentImplementData)) {
+        implementData[browser.name][browserMajorVersion] = currentImplementData;
+        firebase.database().ref(`/data/${browser.name}/${browserMajorVersion}`).set(currentImplementData);
+    }
 }
 
-function buildTable(data, update) {
+
+function buildTable() {
     var table = document.createElement('table');
     table.id = 'table-wrapper';
     var headerTR = document.createElement('tr');
@@ -101,15 +134,15 @@ function buildTable(data, update) {
     table.appendChild(headerTR);
 
     var colSpan = 0;
-    Object.keys(data).forEach(browserName => {
-        colSpan += Object.keys(data[browserName]).length;
+    Object.keys(implementData).forEach(browserName => {
+        colSpan += Object.keys(implementData[browserName]).length;
     });
 
     var rows = {};
-    Object.keys(data).sort().forEach(browserName => {
-        data[browserName] = data[browserName];
+    Object.keys(implementData).sort().forEach(browserName => {
+        implementData[browserName] = implementData[browserName];
         window.browserHeaders[browserName] = {};
-        Object.keys(data[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
+        Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
             var browserHeaderTD = document.createElement('td');
             browserHeaderTD.classList.add(browserName);
             browserHeaderTD.classList.add('browser-header');
@@ -124,14 +157,14 @@ function buildTable(data, update) {
             headerTR.appendChild(browserHeaderTD);
             window.browserHeaders[browserName][version] = browserHeaderTD;
 
-            data[browserName][version] = data[browserName][version];
-            Object.keys(data[browserName][version]).sort().forEach(className => {
-                if (data[browserName][version][className] === null) {
+            implementData[browserName][version] = implementData[browserName][version];
+            Object.keys(implementData[browserName][version]).sort().forEach(className => {
+                if (implementData[browserName][version][className] === null) {
                     rows[className] = null;
                 } else {
                     rows[className] = {};
-                    Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
-                        rows[className][memberName] = data[browserName][version][className][memberName];
+                    Object.keys(implementData[browserName][version][className]).sort().forEach(memberName => {
+                        rows[className][memberName] = implementData[browserName][version][className][memberName];
                     });
                 }
             });
@@ -158,12 +191,12 @@ function buildTable(data, update) {
             classNameTD.appendChild(arrow);
             classNameTR.style.cursor = 'pointer';
             classNameTR.appendChild(classNameTD);
-            Object.keys(data).sort().forEach(browserName => {
+            Object.keys(implementData).sort().forEach(browserName => {
                 window.browserCounters[browserName] = window.browserCounters[browserName] || {};
-                Object.keys(data[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
+                Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
                     var classImpCntTD = document.createElement('td');
                     classImpCntTD.classList.add('imp-cnt');
-                    var specCnt = Object.keys(data[browserName][version][className]).filter(x => data[browserName][version][className][x] === 'spec').length;
+                    var specCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'spec').length;
                     if (memberNames.length) {
                         classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
                         classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
@@ -175,7 +208,8 @@ function buildTable(data, update) {
                 });
             });
             classNameTR.onclick = function () {
-                [...document.getElementsByClassName(this.firstChild.textContent + 'member')].forEach(elm => elm.classList.toggle('collapse'));
+                var cn = this.firstChild.textContent;
+                Array.from(document.getElementsByClassName(this.firstChild.textContent + 'member')).forEach(elm => elm.classList.toggle('collapse'));
                 document.getElementsByClassName(this.firstChild.textContent + 'arrow')[0].classList.toggle('down');
             }
             table.appendChild(classNameTR);
@@ -189,8 +223,8 @@ function buildTable(data, update) {
                 memberNameTD.classList.add('member-name');
                 memberNameTD.textContent = memberName;
                 memberTR.appendChild(memberNameTD);
-                Object.keys(data).sort().forEach(browserName => {
-                    Object.keys(data[browserName]).sort().forEach(version => {
+                Object.keys(implementData).sort().forEach(browserName => {
+                    Object.keys(implementData[browserName]).sort().reverse().forEach(version => {
                         var memberTD = document.createElement('td');
                         memberTD.id = browserName + version + className + memberName;
                         memberTD.classList.add('member-null');
@@ -203,11 +237,11 @@ function buildTable(data, update) {
         }
     });
 
-    Object.keys(data).forEach(browserName => {
-        Object.keys(data[browserName]).forEach(version => {
-            Object.keys(data[browserName][version]).forEach(className => {
-                if (data[browserName][version][className] === null) return;
-                members = Object.keys(data[browserName][version][className]).sort();
+    Object.keys(implementData).sort().forEach(browserName => {
+        Object.keys(implementData[browserName]).sort().forEach(version => {
+            Object.keys(implementData[browserName][version]).sort().forEach(className => {
+                if (implementData[browserName][version][className] === null) return;
+                members = Object.keys(implementData[browserName][version][className]).sort();
                 if (members.length === 0 && window.arrows[className]) {
                     if (window.arrows[className].parentElement) {
                         window.arrows[className].parentElement.removeChild(window.arrows[className]);
@@ -216,7 +250,7 @@ function buildTable(data, update) {
                 members.forEach(memberName => {
                     var memberTD = window.tds[browserName + version + className + memberName];
                     memberTD.classList.add('member-data');
-                    memberTD.classList.add(data[browserName][version][className][memberName]);
+                    memberTD.classList.add(implementData[browserName][version][className][memberName]);
                 });
             });
         });
@@ -245,8 +279,4 @@ function buildTable(data, update) {
     delete window.browserCounters;
 
     document.body.appendChild(table);
-
-    if (update) {
-        dataRef.set(data);
-    }
 }
