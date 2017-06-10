@@ -27,7 +27,7 @@ if (!browser.name.includes('ie')) {
         implementData[browser.name] = implementData[browser.name] || {};
         implementData[browser.name][browserMajorVersion] = {};
 
-        if (browser.name !== 'edge') {
+        if (browser.name !== 'Edge') {
             var docs = [];
             var parser = new DOMParser();
             var promise = Promise.resolve();
