@@ -19,13 +19,17 @@ var pages = [
     }
 ];
 
-if (!browser.name.includes('ie')) {
+if (!browser.name.includes('IE')) {
     var fbRef = firebase.database().ref('/');
     fbRef.once('value').then(snap => {
         var snapData = snap.val();
         implementData = snapData.data || {};
         implementData[browser.name] = implementData[browser.name] || {};
         implementData[browser.name][browserMajorVersion] = {};
+        
+        if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.addStream) {
+            browser.name = 'Safari_LegacyON';
+        }
 
         if (browser.name !== 'Edge') {
             var docs = [];
@@ -93,19 +97,15 @@ function collectImplementData() {
     var notSpecCnt = 0;
 
     var collect = function (type, className) {
-        if(className)
-        currentImplementData[className] = true;
+        if (className)
+            currentImplementData[className] = true;
         var classPrototype = window[className] ? window[className].prototype : null;
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
         if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
-        if(window[className]) {
+        if (window[className]) {
             Object.keys(window[className].prototype).forEach(memberName => {
-                if(!Object.keys(apiData[type][className]).includes(memberName)) {
+                if (!Object.keys(apiData[type][className]).includes(memberName)) {
                     legacy++;
-                    if(browser.name === 'Safari' && className === 'RTCPeerConnection' && memberName === 'addStream') {
-                        browser.name = 'Safari_LegacyON';
-                        implementData[browser.name] = implementData[browser.name] || {};
-                    }
                     currentImplementData[className][memberName] = TYPE_LEGACY;
                 }
             });
@@ -127,7 +127,7 @@ function collectImplementData() {
     }
     Object.keys(apiData.Interface).sort().forEach(className => collect('Interface', className));
     Object.keys(apiData.Dictionary).sort().forEach(className => collect('Dictionary', className));
-    console.log('total:' + totalCnt, 'specCnt:' +specCnt, 'notSpecCnt:' + notSpecCnt);
+    console.log('total:' + totalCnt, 'specCnt:' + specCnt, 'notSpecCnt:' + notSpecCnt);
     if (JSON.stringify(implementData[browser.name][browserMajorVersion]) !== JSON.stringify(currentImplementData)) {
         implementData[browser.name][browserMajorVersion] = currentImplementData;
         firebase.database().ref(`/data/${browser.name}/${browserMajorVersion}`).set(currentImplementData);
