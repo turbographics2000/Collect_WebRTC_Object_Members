@@ -174,6 +174,7 @@ function buildTable() {
                 } else {
                     rows[className] = {};
                     Object.keys(implementData[browserName][version][className]).sort().forEach(memberName => {
+                        if(memberName === 'addStream') debugger;
                         rows[className][memberName] = implementData[browserName][version][className][memberName];
                     });
                 }
@@ -259,6 +260,7 @@ function buildTable() {
                 }
                 members.forEach(memberName => {
                     var memberTD = window.tds[browserName + version + className + memberName];
+                    if(!memberTD) debugger;
                     memberTD.classList.add('member-data');
                     memberTD.classList.add(implementData[browserName][version][className][memberName]);
                 });
