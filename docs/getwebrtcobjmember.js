@@ -27,7 +27,7 @@ if (!browser.name.includes('IE')) {
         implementData[browser.name] = implementData[browser.name] || {};
         implementData[browser.name][browserMajorVersion] = {};
 
-        if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.addStream) {
+        if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.prototype.addStream) {
             browser.name = 'Safari_LegacyON';
         }
 
