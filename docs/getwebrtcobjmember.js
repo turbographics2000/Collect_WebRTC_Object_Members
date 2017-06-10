@@ -102,6 +102,10 @@ function collectImplementData() {
             Object.keys(window[className].prototype).forEach(memberName => {
                 if(!Object.keys(apiData[type][className]).includes(memberName)) {
                     legacy++;
+                    if(browser.name === 'Safari' && className === 'RTCPeerConnection' && memberName === 'addStream') {
+                        browser.name = 'Safari_LegacyON';
+                        implementData[browser.name] = implementData[browser.name] || {};
+                    }
                     currentImplementData[className][memberName] = TYPE_LEGACY;
                 }
             });
