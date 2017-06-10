@@ -20,16 +20,16 @@ var pages = [
 ];
 
 if (!browser.name.includes('IE')) {
+    if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.prototype.addStream) {
+        browser.name = 'Safari_LegacyON';
+    }
+
     var fbRef = firebase.database().ref('/');
     fbRef.once('value').then(snap => {
         var snapData = snap.val();
         implementData = snapData.data || {};
         implementData[browser.name] = implementData[browser.name] || {};
         implementData[browser.name][browserMajorVersion] = {};
-
-        if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.prototype.addStream) {
-            browser.name = 'Safari_LegacyON';
-        }
 
         if (browser.name !== 'Edge') {
             var docs = [];
