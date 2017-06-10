@@ -26,7 +26,7 @@ if (!browser.name.includes('IE')) {
         implementData = snapData.data || {};
         implementData[browser.name] = implementData[browser.name] || {};
         implementData[browser.name][browserMajorVersion] = {};
-        
+
         if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.addStream) {
             browser.name = 'Safari_LegacyON';
         }
@@ -92,7 +92,7 @@ function collectImplementData() {
     var TYPE_LEGACY = 'legacy';
     var currentImplementData = {};
     var totalCnt = 0;
-    var legacy = 0;
+    var legacyCnt = 0;
     var specCnt = 0;
     var notSpecCnt = 0;
 
@@ -103,9 +103,9 @@ function collectImplementData() {
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
         if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
         if (window[className]) {
-            Object.keys(window[className].prototype).forEach(memberName => {
+            Object.keys(classPrototype).forEach(memberName => {
                 if (!Object.keys(apiData[type][className]).includes(memberName)) {
-                    legacy++;
+                    legacyCnt++;
                     currentImplementData[className][memberName] = TYPE_LEGACY;
                 }
             });
@@ -127,7 +127,7 @@ function collectImplementData() {
     }
     Object.keys(apiData.Interface).sort().forEach(className => collect('Interface', className));
     Object.keys(apiData.Dictionary).sort().forEach(className => collect('Dictionary', className));
-    console.log('total:' + totalCnt, 'specCnt:' + specCnt, 'notSpecCnt:' + notSpecCnt);
+    console.log('total:' + totalCnt, 'specCnt:' + specCnt, 'notSpecCnt:' + notSpecCnt, 'legacyCnt:' + legacyCnt);
     if (JSON.stringify(implementData[browser.name][browserMajorVersion]) !== JSON.stringify(currentImplementData)) {
         implementData[browser.name][browserMajorVersion] = currentImplementData;
         firebase.database().ref(`/data/${browser.name}/${browserMajorVersion}`).set(currentImplementData);
