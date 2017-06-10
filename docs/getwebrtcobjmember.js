@@ -106,6 +106,9 @@ function collectImplementData() {
             Object.keys(classPrototype).forEach(memberName => {
                 if (!Object.keys(apiData[type][className]).includes(memberName)) {
                     legacyCnt++;
+                    if(memberName === 'addStream') {
+                        debugger;
+                    }
                     currentImplementData[className][memberName] = TYPE_LEGACY;
                 }
             });
@@ -150,7 +153,6 @@ function buildTable() {
 
     var rows = {};
     Object.keys(implementData).sort().forEach(browserName => {
-        implementData[browserName] = implementData[browserName];
         window.browserHeaders[browserName] = {};
         Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
             var browserHeaderTD = document.createElement('td');
