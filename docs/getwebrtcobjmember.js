@@ -92,6 +92,7 @@ function collectImplementData() {
     var notSpecCnt = 0;
 
     var collect = function (type, className) {
+        if(className)
         currentImplementData[className] = true;
         var classPrototype = window[className] ? window[className].prototype : null;
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
@@ -105,7 +106,7 @@ function collectImplementData() {
                     currentImplementData[className][memberName] = TYPE_SPEC;
                 } else {
                     notSpecCnt++;
-                    if(browserName === 'Safari' && memberName === 'addStream') {
+                    if(browser.name === 'Safari' && memberName === 'addStream') {
                         browser.name = 'Safari_NoLegacy'
                         implementData[browser.name] = implementData[browser.name] || {};
                     }
