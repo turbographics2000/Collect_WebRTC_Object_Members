@@ -170,6 +170,7 @@ function buildTable() {
             implementData[browserName][version] = implementData[browserName][version];
             Object.keys(implementData[browserName][version]).sort().forEach(className => {
                 rows[className] = {};
+                if(className === 'RTCPeerConnection') debugger;
                 Object.keys(implementData[browserName][version][className]).sort().forEach(memberName => {
                     if (memberName === 'addStream') debugger;
                     rows[className][memberName] = implementData[browserName][version][className][memberName];
