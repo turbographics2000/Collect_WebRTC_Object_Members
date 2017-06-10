@@ -158,7 +158,7 @@ function buildTable() {
             browserHeaderTD.classList.add('browser-header');
             var browserNameDiv = document.createElement('div');
             browserNameDiv.className = 'browser-name';
-            browserNameDiv.textContent = browserName.replace('_', '<br>');
+            browserNameDiv.textContent = browserName.replace('_', ' ');
             var browserVersionDiv = document.createElement('div');
             browserVersionDiv.className = 'browser-version';
             browserVersionDiv.textContent = version;
