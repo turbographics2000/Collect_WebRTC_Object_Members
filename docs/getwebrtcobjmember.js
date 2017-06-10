@@ -21,7 +21,7 @@ var pages = [
 
 if (!browser.name.includes('IE')) {
     if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.prototype.addStream) {
-        browser.name = 'Safari_LegacyON';
+        browser.name = 'Safari\nLegacyON';
     }
 
     var fbRef = firebase.database().ref('/');
