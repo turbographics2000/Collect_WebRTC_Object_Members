@@ -262,6 +262,7 @@ function buildTable(objMembers) {
       var headerBar = document.createElement('div');
       headerBar.classList.add('header-bar');
       headerBar.style.height = (specCnt / memberCnt * 100) + '%';
+      headerBar.style.backgroundColor = heatColor(specCnt / memberCnt); 
       header.appendChild(headerBar);
       var headerCnt = document.createElement('div');
       headerCnt.classList.add('header-cnt');
