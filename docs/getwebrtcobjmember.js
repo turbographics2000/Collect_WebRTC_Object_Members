@@ -196,12 +196,13 @@ function buildTable() {
                 var classImpCntTD = document.createElement('td');
                 classImpCntTD.classList.add('imp-cnt');
                 var specCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'spec').length;
-                if (memberNames.length) {
-                    classImpCntTD.style.background = heatColor(specCnt / memberNames.length)
-                    classImpCntTD.textContent = specCnt + ' / ' + memberNames.length;
+                var memberCnt = Object.keys(rows[className]).filter(memberName => rows[className][memberName] !== 'legacy').length;
+                if (memberCnt) {
+                    classImpCntTD.style.background = heatColor(specCnt / memberCnt);
+                    classImpCntTD.textContent = specCnt + ' / ' + memberCnt;
                     window.browserCounters[browserName][version] = window.browserCounters[browserName][version] || { specCnt: 0, memberCnt: 0 };
                     window.browserCounters[browserName][version].specCnt += specCnt;
-                    window.browserCounters[browserName][version].memberCnt += memberNames.length;
+                    window.browserCounters[browserName][version].memberCnt += memberCnt;
                 }
                 classNameTR.appendChild(classImpCntTD);
             });
