@@ -3,20 +3,37 @@
 
 <head>
     <meta charset="utf-8">
+    <link rel="SHORTCUT ICON" href="webrtc-logo-vert-retro-dist.svg">
     <title>WebRTC Object Member</title>
     <style>
+        @font-face {
+            font-family: 'Open Sans';
+            font-style: normal;
+            font-weight: 300;
+            src: local('Open Sans Light'), local('OpenSans-Light'), url(https://fonts.gstatic.com/s/opensans/v13/DXI1ORHCpsQm3Vp6mXoaTa-j2U0lmluP9RWlSytm3ho.woff2) format('woff2');
+            unicode-range: U+0460-052F, U+20B4, U+2DE0-2DFF, U+A640-A69F;
+        }
+
+        body {
+            margin: 0;
+        }
+
         table {
             border-collapse: collapse;
+            table-layout: fixed;
+            border-spacing: 1px;
         }
 
         td {
             background: #eee;
             border: 2px white solid;
+            box-sizing: border-box;
         }
 
         .imp-cnt {
             text-align: center;
             color: white;
+            width: 100px;
         }
 
         .class-notimpliment {
@@ -40,11 +57,70 @@
             transform: rotate(90deg);
         }
 
+        #header {
+            background: rgb(68, 171, 68);/*#454545;*/
+            margin-bottom: 0.5em;
+            color: white;
+            text-decoration: none;
+            width: 100%;
+            font-family: 'Open Sans';
+            font-size: 1.25em;
+            overflow: hidden;
+            position: relative;
+            left: 0;
+            top: 0;
+        }
+
+        #header #nav {
+            float: left;
+            margin-top: 13px;
+            margin-left: 10px;
+        }
+
+        #logo {
+            display: block;
+            float: left;
+            padding: 7px;
+            padding-left: 10px;
+            padding-right: 10px;
+            background: white;
+        }
+
+        #logo img {
+
+            display: block;
+            width: 40px;
+            height: 40px;
+        }
+
+        #contentBody {
+            margin-left: 1em;
+        }
+
         .browser-header {
             position: relative;
             text-align: center;
             height: 100px;
             width: 100px;
+        }
+
+        .col-header {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        #headerSpacer {
+            position: sticky;
+            left: 0;
+            top: 0;
+            z-index: 2;
+        }
+
+        .row-header {
+            position: sticky;
+            left: 0;
+            font-size: 14px;
         }
 
         .browser-name,
@@ -59,6 +135,7 @@
             background: #44ab44;
             width: 100%;
             left: 0;
+            opacity: 0.5;
         }
 
         .header-cnt {
@@ -72,38 +149,45 @@
         }
 
         .member-row td {
-            border: solid;
-            border-width: 2px 40px;
+            width: 40px;
             border-color: white;
         }
+        /*.class-name,
+        .member-name {
+            position: -webkit-sticky;
+            position: sticky;
+        }*/
 
         .member-name {
             padding-left: 30px;
         }
 
-        .legacy {
-            background: #999;
-            background-image: url(done.svg);
+        .meber-data {
+            text-align: center;
+        }
+
+        .member-data>div {
+            width: 40px;
+            height: 24px;
             background-size: 24px 24px;
             background-position: center;
             background-repeat: no-repeat;
+            margin: auto;
         }
 
-        .notspec {
-            background: #e11;
+        .legacy>div {
+            background-color: #999;
+            background-image: url(done.svg);
+        }
+
+        .notspec>div {
+            background-color: #e11;
             background-image: url(clear.svg);
-            background-size: 24px 24px;
-            background-position: center;
-            background-repeat: no-repeat;
         }
 
-        .spec {
-            background: #44ab44;
+        .spec>div {
+            background-color: #44ab44;
             background-image: url(done.svg);
-            background-size: 24px 24px;
-            background-position: center;
-            background-repeat: no-repeat;
-            box-sizing: border-box;
         }
 
         .collapse {
@@ -131,6 +215,16 @@
 
     <script src="WebIDLParser.js"></script>
     <script src="getwebrtcobjmember.js"></script>
+
+    <div id="header">
+        <a href="https://webrtc.org/" id="logo"><img src="webrtc-logo-vert-retro-dist.svg" alt="WebRTC"></a>
+        <div id="nav">
+            <span>WebRTC 1.0 &amp; Media Capture and Streams API Browser Implementation Table</span>
+        </div>
+    </div>
+    <div id="contentBody">
+        <div id="topHide"></div>
+    </div>
 </body>
 
 </html>

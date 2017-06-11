@@ -8,6 +8,7 @@ var browserMajorVersion = parseInt(browser.version);
 
 var apiData = null;
 var implementData = null;
+var MediaDeviceInfoData = null;
 var pages = [
     {
         url: 'https://www.w3.org/TR/webrtc/',
@@ -29,7 +30,7 @@ if (!browser.name.includes('IE')) {
         var snapData = snap.val();
         implementData = snapData.data || {};
         implementData[browser.name] = implementData[browser.name] || {};
-        implementData[browser.name][browserMajorVersion] = {};
+        implementData[browser.name][browserMajorVersion] = implementData[browser.name][browserMajorVersion] || {};
 
         if (browser.name !== 'Edge') {
             var docs = [];
@@ -65,6 +66,10 @@ if (!browser.name.includes('IE')) {
             });
         }
     }).then(_ => {
+        return navigator.mediaDevices.enumerateDevices().then(devices => {
+            MediaDeviceInfoData = devices;
+        });
+    }).then(_ => {
         collectImplementData();
         buildTable();
     }).catch(err => {
@@ -97,8 +102,22 @@ function collectImplementData() {
     var notSpecCnt = 0;
 
     var collect = function (type, className) {
-        if (className)
+        if ([
+            'ConstrainBooleanParameters',
+            'ConstrainDOMStringParameters',
+            'ConstrainDoubleRange',
+            'ConstrainLongRange',
+            'DoubleRange',
+            'LongRange'
+        ].includes(className)) {
+            return;
+        }
+        if (className.endsWith('Init')) {
+            return;
+        }
+        if (className) {
             currentImplementData[className] = true;
+        }
         var classPrototype = window[className] ? window[className].prototype : null;
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
         if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
@@ -111,10 +130,48 @@ function collectImplementData() {
                 }
             });
         }
+        var pc = null, dc = null;
+        if (!window.RTCDataChannel) {
+            pc = new RTCPeerConnection(null);
+            if (pc.createDataChannel) {
+                dc = pc.createDataChannel('dc-check');
+            }
+        }
         Object.keys(apiData[type][className]).sort().forEach(memberType => {
             if (typeof apiData[type][className][memberType] !== 'object') return;
             Object.keys(apiData[type][className][memberType]).sort().forEach(memberName => {
+                if(memberName === 'cs_param_pattern' || memberName === 'param_pattern') return;
                 if (currentImplementData[className] === true) currentImplementData[className] = {};
+                if (className === 'MediaDeviceInfo' && !window.MediaDeviceInfo) {
+                    if (MediaDeviceInfoData && MediaDeviceInfoData.length) {
+                        totalCnt++;
+                        MediaDeviceInfoData.forEach(device => {
+                            if (memberName in device) {
+                                if (!currentImplementData[className][memberName]) {
+                                    specCnt++;
+                                    currentImplementData[className][memberName] = TYPE_SPEC;
+                                }
+                            } else {
+                                notSpecCnt++;
+                                if (!currentImplementData[className][memberName]) {
+                                    notSpecCnt++;
+                                    currentImplementData[className][memberName] = TYPE_NOTSPEC;
+                                }
+                            }
+                        });
+                        return;
+                    }
+                } else if (className === 'RTCDataChannel' && !window.RTCDataChannel) {
+                    totalCnt++;
+                    if (dc && memberName in dc) {
+                        specCnt++;
+                        currentImplementData[className][memberName] = TYPE_SPEC;
+                    } else {
+                        notSpecCnt++;
+                        currentImplementData[className][memberName] = TYPE_NOTSPEC;
+                    }
+                    return;
+                }
                 if (classPrototype && (memberName in classPrototype || classPrototype[memberName])) {
                     specCnt++;
                     currentImplementData[className][memberName] = TYPE_SPEC;
@@ -128,8 +185,42 @@ function collectImplementData() {
     }
     Object.keys(apiData.Interface).sort().forEach(className => collect('Interface', className));
     Object.keys(apiData.Dictionary).sort().forEach(className => collect('Dictionary', className));
+    MediaDeviceInfoData = null;
+    try {
+        if (dc) {
+            dc.close();
+            dc = null;
+        }
+        if (pc) {
+            pc.close();
+            pc = null;
+        }
+    } catch (ex) { }
+    var saveDataTotalCnt = 0;
+    var saveDataLegacyCnt = 0;
+    var saveDataSpecCnt = 0;
+    var saveDataNotSpecCnt = 0;
+    Object.keys(implementData[browser.name][browserMajorVersion]).forEach(className => {
+        Object.keys(implementData[browser.name][browserMajorVersion][className]).forEach(memberName => {
+            switch (implementData[browser.name][browserMajorVersion][className][memberName]) {
+                case TYPE_LEGACY:
+                    saveDataLegacyCnt++;
+                    break;
+                case TYPE_SPEC:
+                    saveDataSpecCnt++;
+                    saveDataTotalCnt++;
+                    break;
+                case TYPE_NOTSPEC:
+                    saveDataNotSpecCnt++;
+                    saveDataTotalCnt++;
+                    break;
+            }
+        });
+    });
     console.log('total:' + totalCnt, 'specCnt:' + specCnt, 'notSpecCnt:' + notSpecCnt, 'legacyCnt:' + legacyCnt);
-    if (JSON.stringify(implementData[browser.name][browserMajorVersion]) !== JSON.stringify(currentImplementData)) {
+    console.log('saveData total:' + saveDataTotalCnt, 'saveData specCnt:' + saveDataSpecCnt, 'saveData notSpecCnt:' + saveDataNotSpecCnt, 'saveData legacyCnt:' + saveDataLegacyCnt);
+    if (totalCnt !== saveDataTotalCnt || specCnt !== saveDataSpecCnt) {
+        //JSON.stringify(implementData[browser.name][browserMajorVersion]) !== JSON.stringify(currentImplementData)) {
         implementData[browser.name][browserMajorVersion] = currentImplementData;
         firebase.database().ref(`/data/${browser.name}/${browserMajorVersion}`).set(currentImplementData);
     }
@@ -137,12 +228,18 @@ function collectImplementData() {
 
 
 function buildTable() {
-    var table = document.createElement('table');
-    table.id = 'table-wrapper';
+    var headerDiv = document.createElement('div');
+    headerDiv.classList.add('col-header');
+    var headerTable = document.createElement('table');
     var headerTR = document.createElement('tr');
+    headerTR.classList.add('header-row');
     var headerSpacerTD = document.createElement('td');
+    headerSpacerTD.id = 'headerSpacer';
     headerTR.appendChild(headerSpacerTD);
-    table.appendChild(headerTR);
+    headerTable.appendChild(headerTR);
+    headerDiv.appendChild(headerTable);
+
+    var table = document.createElement('table');
 
     var colSpan = 0;
     Object.keys(implementData).forEach(browserName => {
@@ -183,6 +280,7 @@ function buildTable() {
         var classNameTD = document.createElement('td');
         classNameTD.textContent = className;
         classNameTD.classList.add('class-name');
+        classNameTD.classList.add('row-header');
         var arrow = document.createElement('div');
         window.arrows[className] = arrow;
         arrow.classList.add('arrow');
@@ -221,13 +319,17 @@ function buildTable() {
             memberTR.classList.add('member-row');
             memberTR.classList.add(rows[className][memberName]);
             memberNameTD.classList.add('member-name');
+            memberNameTD.classList.add('row-header');
             memberNameTD.textContent = memberName;
             memberTR.appendChild(memberNameTD);
             Object.keys(implementData).sort().forEach(browserName => {
                 Object.keys(implementData[browserName]).sort().reverse().forEach(version => {
                     var memberTD = document.createElement('td');
+                    memberTD.classList.add('member-data');
                     memberTD.id = browserName + version + className + memberName;
                     memberTD.classList.add('member-null');
+                    var checkDiv = document.createElement('div');
+                    memberTD.appendChild(checkDiv);
                     window.tds[browserName + version + className + memberName] = memberTD;
                     memberTR.appendChild(memberTD);
                 });
@@ -278,5 +380,11 @@ function buildTable() {
     delete window.browserHeaders;
     delete window.browserCounters;
 
-    document.body.appendChild(table);
+    contentBody.appendChild(headerDiv);
+    contentBody.appendChild(table);
+    var browserCnt = 0;
+    var rowHeaderWidth = document.getElementsByClassName('class-name')[0].getBoundingClientRect().width;
+    headerSpacerTD.style.width = (rowHeaderWidth - 2) + 'px';
+    Object.keys(implementData).forEach(browserName => browserCnt += Object.keys(implementData[browserName]).length);
+    headerTable.style.width = table.style.width = (rowHeaderWidth + browserCnt * 100) + 'px';
 }
