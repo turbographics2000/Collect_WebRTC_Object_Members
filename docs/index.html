@@ -36,9 +36,22 @@
         }
 
         .imp-cnt {
+            position: relative;
             text-align: center;
             color: white;
             width: 100px;
+        }
+
+        .legacy-cnt {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            padding: 2px;
+            font-size: smaller;
+            color: white;
+            background: #777;
+            height: 50%;
+            line-height: 100%;
         }
 
         .class-notimpliment {
@@ -186,7 +199,7 @@
         }
 
         .legacy>div {
-            background-color: #999;
+            background-color: #777;
             background-image: url(done.svg);
         }
 

@@ -121,8 +121,12 @@ function collectImplementData() {
         var classPrototype = window[className] ? window[className].prototype : null;
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
         if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
-        if (window[className]) {
+        if (window[className] && ![
+            'HTMLIFrameElement', 
+            'RTCStatsReport'
+            ].includes(className)) {
             Object.keys(classPrototype).forEach(memberName => {
+                if(['toJSON'].includes(memberName)) return;
                 if (!Object.keys(apiData[type][className]).includes(memberName)) {
                     legacyCnt++;
                     if (currentImplementData[className] === true) currentImplementData[className] = {};
@@ -294,6 +298,7 @@ function buildTable() {
                 var classImpCntTD = document.createElement('td');
                 classImpCntTD.classList.add('imp-cnt');
                 var specCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'spec').length;
+                var legacyCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'legacy').length;
                 var memberCnt = Object.keys(rows[className]).filter(memberName => rows[className][memberName] !== 'legacy').length;
                 if (memberCnt) {
                     classImpCntTD.style.background = heatColor(specCnt / memberCnt);
@@ -301,6 +306,12 @@ function buildTable() {
                     window.browserCounters[browserName][version] = window.browserCounters[browserName][version] || { specCnt: 0, memberCnt: 0 };
                     window.browserCounters[browserName][version].specCnt += specCnt;
                     window.browserCounters[browserName][version].memberCnt += memberCnt;
+                }
+                if(legacyCnt) {
+                    var legacyCntDiv = document.createElement('div');
+                    legacyCntDiv.classList.add('legacy-cnt');
+                    legacyCntDiv.textContent = legacyCnt;
+                    classImpCntTD.appendChild(legacyCntDiv);
                 }
                 classNameTR.appendChild(classImpCntTD);
             });
@@ -350,7 +361,7 @@ function buildTable() {
                 }
                 members.forEach(memberName => {
                     var memberTD = window.tds[browserName + version + className + memberName];
-                    if (!memberTD) debugger;
+
                     memberTD.classList.add('member-data');
                     memberTD.classList.add(implementData[browserName][version][className][memberName]);
                 });
