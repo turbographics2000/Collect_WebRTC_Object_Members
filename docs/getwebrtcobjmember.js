@@ -140,7 +140,7 @@ function collectImplementData() {
         Object.keys(apiData[type][className]).sort().forEach(memberType => {
             if (typeof apiData[type][className][memberType] !== 'object') return;
             Object.keys(apiData[type][className][memberType]).sort().forEach(memberName => {
-                if(memberName === 'cs_param_pattern' || memberName === 'param_pattern') return;
+                if(['cs_param_pattern', 'param_pattern', 'toJSON'].includes(memberName)) return;
                 if (currentImplementData[className] === true) currentImplementData[className] = {};
                 if (className === 'MediaDeviceInfo' && !window.MediaDeviceInfo) {
                     if (MediaDeviceInfoData && MediaDeviceInfoData.length) {
