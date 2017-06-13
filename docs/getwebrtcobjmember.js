@@ -28,6 +28,7 @@ if (!browser.name.includes('IE')) {
     var fbRef = firebase.database().ref('/');
     fbRef.once('value').then(snap => {
         var snapData = snap.val();
+        firebase.database().goOffline();
         implementData = snapData.data || {};
         implementData[browser.name] = implementData[browser.name] || {};
         implementData[browser.name][browserMajorVersion] = implementData[browser.name][browserMajorVersion] || {};
@@ -51,7 +52,10 @@ if (!browser.name.includes('IE')) {
             return promise.then(docs => {
                 var parseData = WebIDLParse(docs);
                 if (JSON.stringify(apiData) !== JSON.stringify(parseData)) {
-                    firebase.database().ref('/apiData').set(parseData);
+                    firebase.database.goOnline();
+                    firebase.database().ref('/apiData').set(parseData).then(_ => {
+                        firebase.goOffline();
+                    });
                 }
                 apiData = parseData;
             });
@@ -226,7 +230,10 @@ function collectImplementData() {
     if (totalCnt !== saveDataTotalCnt || specCnt !== saveDataSpecCnt) {
         //JSON.stringify(implementData[browser.name][browserMajorVersion]) !== JSON.stringify(currentImplementData)) {
         implementData[browser.name][browserMajorVersion] = currentImplementData;
-        firebase.database().ref(`/data/${browser.name}/${browserMajorVersion}`).set(currentImplementData);
+        firebase.database().goOnline();
+        firebase.database().ref(`/data/${browser.name}/${browserMajorVersion}`).set(currentImplementData).then(_ => {
+            firebase.database().goOffline();
+        });
     }
 }
 
