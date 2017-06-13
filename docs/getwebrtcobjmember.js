@@ -122,11 +122,11 @@ function collectImplementData() {
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
         if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
         if (window[className] && ![
-            'HTMLIFrameElement', 
+            'HTMLIFrameElement',
             'RTCStatsReport'
-            ].includes(className)) {
+        ].includes(className)) {
             Object.keys(classPrototype).forEach(memberName => {
-                if(['toJSON'].includes(memberName)) return;
+                if (['toJSON'].includes(memberName)) return;
                 if (!Object.keys(apiData[type][className]).includes(memberName)) {
                     legacyCnt++;
                     if (currentImplementData[className] === true) currentImplementData[className] = {};
@@ -144,7 +144,7 @@ function collectImplementData() {
         Object.keys(apiData[type][className]).sort().forEach(memberType => {
             if (typeof apiData[type][className][memberType] !== 'object') return;
             Object.keys(apiData[type][className][memberType]).sort().forEach(memberName => {
-                if(['cs_param_pattern', 'param_pattern', 'toJSON'].includes(memberName)) return;
+                if (['cs_param_pattern', 'param_pattern', 'toJSON'].includes(memberName)) return;
                 if (currentImplementData[className] === true) currentImplementData[className] = {};
                 if (className === 'MediaDeviceInfo' && !window.MediaDeviceInfo) {
                     if (MediaDeviceInfoData && MediaDeviceInfoData.length) {
@@ -253,7 +253,8 @@ function buildTable() {
     var rows = {};
     Object.keys(implementData).sort().forEach(browserName => {
         window.browserHeaders[browserName] = {};
-        Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
+        Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
+            console.log(browserName, version);
             var browserHeaderTD = document.createElement('td');
             browserHeaderTD.classList.add(browserName);
             browserHeaderTD.classList.add('browser-header');
@@ -294,20 +295,20 @@ function buildTable() {
         classNameTR.appendChild(classNameTD);
         Object.keys(implementData).sort().forEach(browserName => {
             window.browserCounters[browserName] = window.browserCounters[browserName] || {};
-            Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
+            Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
                 var classImpCntTD = document.createElement('td');
                 classImpCntTD.classList.add('imp-cnt');
                 var specCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'spec').length;
                 var legacyCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'legacy').length;
                 var memberCnt = Object.keys(rows[className]).filter(memberName => rows[className][memberName] !== 'legacy').length;
+                window.browserCounters[browserName][version] = window.browserCounters[browserName][version] || { specCnt: 0, memberCnt: 0 };
                 if (memberCnt) {
                     classImpCntTD.style.background = heatColor(specCnt / memberCnt);
                     classImpCntTD.textContent = specCnt + ' / ' + memberCnt;
-                    window.browserCounters[browserName][version] = window.browserCounters[browserName][version] || { specCnt: 0, memberCnt: 0 };
                     window.browserCounters[browserName][version].specCnt += specCnt;
                     window.browserCounters[browserName][version].memberCnt += memberCnt;
                 }
-                if(legacyCnt) {
+                if (legacyCnt) {
                     var legacyCntDiv = document.createElement('div');
                     legacyCntDiv.classList.add('legacy-cnt');
                     legacyCntDiv.textContent = legacyCnt;
