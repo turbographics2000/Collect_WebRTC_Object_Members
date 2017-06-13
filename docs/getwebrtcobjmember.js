@@ -52,7 +52,7 @@ if (!browser.name.includes('IE')) {
             return promise.then(docs => {
                 var parseData = WebIDLParse(docs);
                 if (JSON.stringify(apiData) !== JSON.stringify(parseData)) {
-                    firebase.database.goOnline();
+                    firebase.database().goOnline();
                     firebase.database().ref('/apiData').set(parseData).then(_ => {
                         firebase.goOffline();
                     });
