@@ -295,7 +295,7 @@ function buildTable() {
         classNameTR.appendChild(classNameTD);
         Object.keys(implementData).sort().forEach(browserName => {
             window.browserCounters[browserName] = window.browserCounters[browserName] || {};
-            Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).splice(0, 3).forEach(version => {
+            Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
                 var classImpCntTD = document.createElement('td');
                 classImpCntTD.classList.add('imp-cnt');
                 var specCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'spec').length;
