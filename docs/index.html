@@ -240,18 +240,21 @@
         firebase.initializeApp(config);
     </script>
 
-    <script src="WebIDLParser.js"></script>
-    <script src="getwebrtcobjmember.js"></script>
-
     <div id="header">
         <a href="https://webrtc.org/" id="logo"><img src="webrtc-logo-vert-retro-dist.svg" alt="WebRTC"></a>
         <div id="nav">
             <span>WebRTC 1.0 &amp; Media Capture and Streams API Browser Implementation Table</span>
         </div>
     </div>
+    <div>
+        <label><input type="checkbox" id="chkMinor">Minor Browser</label>
+    </div>
     <div id="contentBody">
         <div id="topHide"></div>
     </div>
+    <script src="WebIDLParser.js"></script>
+    <script src="getwebrtcobjmember.js"></script>
+
 </body>
 
 </html>

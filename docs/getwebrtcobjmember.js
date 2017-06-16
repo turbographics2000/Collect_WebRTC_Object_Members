@@ -1,8 +1,3 @@
-window.browserHeaders = {};
-window.browserCounters = {};
-window.tds = {};
-window.arrows = {};
-
 var browser = detectBrowser(navigator.userAgent);
 var browserMajorVersion = parseInt(browser.version);
 
@@ -19,6 +14,10 @@ var pages = [
         legacyElementId: 'navigatorusermedia-interface-extensions'
     }
 ];
+
+chkMinor.onclick = function (evt) {
+    browserFilter();
+}
 
 if (!browser.name.includes('IE')) {
     if (browser.name === 'Safari' && window.RTCPeerConnection && window.RTCPeerConnection.prototype.addStream) {
@@ -54,7 +53,7 @@ if (!browser.name.includes('IE')) {
                 if (JSON.stringify(apiData) !== JSON.stringify(parseData)) {
                     firebase.database().goOnline();
                     firebase.database().ref('/apiData').set(parseData).then(_ => {
-                        firebase.goOffline();
+                        firebase.database().goOffline();
                     });
                 }
                 apiData = parseData;
@@ -75,10 +74,37 @@ if (!browser.name.includes('IE')) {
         });
     }).then(_ => {
         collectImplementData();
-        buildTable();
+        var data = browserFilter();
     }).catch(err => {
         console.log(err);
     });
+}
+
+function browserFilter() {
+    if (window.implementTable) {
+        implementTableHeader.remove();
+        implementTable.remove();
+    }
+
+    window.browserHeaders = {};
+    window.browserCounters = {};
+    window.tds = {};
+    window.arrows = {};
+
+    var data = {};
+    if (!chkMinor.checked) {
+        Object.keys(implementData)
+            .filter(browserName => ['Chrome', 'Edge', 'Firefox', 'Safari'].includes(browserName))
+            .forEach(browserName => {
+                data[browserName] = {};
+                Object.keys(implementData[browserName]).forEach(version => {
+                    data[browserName][version] = implementData[browserName][version];
+                });
+            });
+    } else {
+        data = implementData;
+    }
+    buildTable(data);
 }
 
 function heatColor(alpha) {
@@ -122,7 +148,13 @@ function collectImplementData() {
         if (className) {
             currentImplementData[className] = true;
         }
-        var classPrototype = window[className] ? window[className].prototype : null;
+        var classPrototype = null;
+        if (window[className]) {
+            classPrototype = {};
+            Object.keys(window[className]).concat(Object.keys(window[className].prototype)).forEach(memberName => {
+                classPrototype[memberName] = true;
+            });
+        }
         if (className === 'NavigatorUserMedia') classPrototype = navigator;
         if (className === 'MediaDevices') classPrototype = navigator.mediaDevices;
         if (window[className] && ![
@@ -238,8 +270,9 @@ function collectImplementData() {
 }
 
 
-function buildTable() {
+function buildTable(data) {
     var headerDiv = document.createElement('div');
+    headerDiv.id = 'implementTableHeader';
     headerDiv.classList.add('col-header');
     var headerTable = document.createElement('table');
     var headerTR = document.createElement('tr');
@@ -251,22 +284,25 @@ function buildTable() {
     headerDiv.appendChild(headerTable);
 
     var table = document.createElement('table');
+    table.id = 'implementTable';
 
     var colSpan = 0;
-    Object.keys(implementData).forEach(browserName => {
-        colSpan += Object.keys(implementData[browserName]).length;
+    Object.keys(data).forEach(browserName => {
+        colSpan += Object.keys(data[browserName]).length;
     });
 
     var rows = {};
-    Object.keys(implementData).sort().forEach(browserName => {
+    Object.keys(data).sort().forEach(browserName => {
         window.browserHeaders[browserName] = {};
-        Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
+        var browserType = ['Chrome', 'Edge', 'Firefox', 'Safari'].includes(browserName) ? 'major' : 'minor';
+        Object.keys(data[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
             console.log(browserName, version);
             var browserHeaderTD = document.createElement('td');
             browserHeaderTD.classList.add(browserName);
             browserHeaderTD.classList.add('browser-header');
+            browserHeaderTD.classList.add(browserType);
             var browserNameDiv = document.createElement('div');
-            browserNameDiv.className = 'browser-name';
+            browserNameDiv.classList.add('browser-name');
             browserNameDiv.textContent = browserName.replace('_', ' ');
             var browserVersionDiv = document.createElement('div');
             browserVersionDiv.className = 'browser-version';
@@ -276,11 +312,11 @@ function buildTable() {
             headerTR.appendChild(browserHeaderTD);
             window.browserHeaders[browserName][version] = browserHeaderTD;
 
-            implementData[browserName][version] = implementData[browserName][version];
-            Object.keys(implementData[browserName][version]).sort().forEach(className => {
+            data[browserName][version] = data[browserName][version];
+            Object.keys(data[browserName][version]).sort().forEach(className => {
                 rows[className] = rows[className] || {};
-                Object.keys(implementData[browserName][version][className]).sort().forEach(memberName => {
-                    rows[className][memberName] = implementData[browserName][version][className][memberName];
+                Object.keys(data[browserName][version][className]).sort().forEach(memberName => {
+                    rows[className][memberName] = data[browserName][version][className][memberName];
                 });
             });
         });
@@ -300,13 +336,15 @@ function buildTable() {
         classNameTD.appendChild(arrow);
         classNameTR.style.cursor = 'pointer';
         classNameTR.appendChild(classNameTD);
-        Object.keys(implementData).sort().forEach(browserName => {
+        Object.keys(data).sort().forEach(browserName => {
+            var browserType = ['Chrome', 'Edge', 'Firefox', 'Safari'].includes(browserName) ? 'major' : 'minor';
             window.browserCounters[browserName] = window.browserCounters[browserName] || {};
-            Object.keys(implementData[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
+            Object.keys(data[browserName]).sort((a, b) => (+b) - (+a)).forEach(version => {
                 var classImpCntTD = document.createElement('td');
                 classImpCntTD.classList.add('imp-cnt');
-                var specCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'spec').length;
-                var legacyCnt = Object.keys(implementData[browserName][version][className] || {}).filter(x => implementData[browserName][version][className][x] === 'legacy').length;
+                classImpCntTD.classList.add('browserType');
+                var specCnt = Object.keys(data[browserName][version][className] || {}).filter(x => data[browserName][version][className][x] === 'spec').length;
+                var legacyCnt = Object.keys(data[browserName][version][className] || {}).filter(x => data[browserName][version][className][x] === 'legacy').length;
                 var memberCnt = Object.keys(rows[className]).filter(memberName => rows[className][memberName] !== 'legacy').length;
                 window.browserCounters[browserName][version] = window.browserCounters[browserName][version] || { specCnt: 0, memberCnt: 0 };
                 if (memberCnt) {
@@ -341,10 +379,12 @@ function buildTable() {
             memberNameTD.classList.add('row-header');
             memberNameTD.textContent = memberName;
             memberTR.appendChild(memberNameTD);
-            Object.keys(implementData).sort().forEach(browserName => {
-                Object.keys(implementData[browserName]).sort().reverse().forEach(version => {
+            Object.keys(data).sort().forEach(browserName => {
+                var browserType = ['Chrome', 'Edge', 'Firefox', 'Safari'].includes(browserName) ? 'major' : 'minor';
+                Object.keys(data[browserName]).sort().reverse().forEach(version => {
                     var memberTD = document.createElement('td');
                     memberTD.classList.add('member-data');
+                    memberTD.classList.add(browserType);
                     memberTD.id = browserName + version + className + memberName;
                     memberTD.classList.add('member-null');
                     var checkDiv = document.createElement('div');
@@ -357,11 +397,11 @@ function buildTable() {
         });
     });
 
-    Object.keys(implementData).sort().forEach(browserName => {
-        Object.keys(implementData[browserName]).sort().forEach(version => {
-            Object.keys(implementData[browserName][version]).sort().forEach(className => {
-                if (implementData[browserName][version][className] === null) return;
-                members = Object.keys(implementData[browserName][version][className]).sort();
+    Object.keys(data).sort().forEach(browserName => {
+        Object.keys(data[browserName]).sort().forEach(version => {
+            Object.keys(data[browserName][version]).sort().forEach(className => {
+                if (data[browserName][version][className] === null) return;
+                members = Object.keys(data[browserName][version][className]).sort();
                 if (members.length === 0 && window.arrows[className]) {
                     if (window.arrows[className].parentElement) {
                         window.arrows[className].parentElement.removeChild(window.arrows[className]);
@@ -369,9 +409,8 @@ function buildTable() {
                 }
                 members.forEach(memberName => {
                     var memberTD = window.tds[browserName + version + className + memberName];
-
                     memberTD.classList.add('member-data');
-                    memberTD.classList.add(implementData[browserName][version][className][memberName]);
+                    memberTD.classList.add(data[browserName][version][className][memberName]);
                 });
             });
         });
@@ -404,6 +443,6 @@ function buildTable() {
     var browserCnt = 0;
     var rowHeaderWidth = document.getElementsByClassName('class-name')[0].getBoundingClientRect().width;
     headerSpacerTD.style.width = (rowHeaderWidth - 2) + 'px';
-    Object.keys(implementData).forEach(browserName => browserCnt += Object.keys(implementData[browserName]).length);
+    Object.keys(data).forEach(browserName => browserCnt += Object.keys(data[browserName]).length);
     headerTable.style.width = table.style.width = (rowHeaderWidth + browserCnt * 100) + 'px';
 }
